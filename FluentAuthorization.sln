@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2043
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationTest", "Authorization\AuthorizationTest.csproj", "{4DC32A3F-49D8-48B5-8819-0FE78ACE4B84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAuthorization", "FluentAuthorization\FluentAuthorization.csproj", "{2BC9838D-BFAF-45AA-A71A-9B9F0EF70D26}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4DC32A3F-49D8-48B5-8819-0FE78ACE4B84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DC32A3F-49D8-48B5-8819-0FE78ACE4B84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DC32A3F-49D8-48B5-8819-0FE78ACE4B84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DC32A3F-49D8-48B5-8819-0FE78ACE4B84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BC9838D-BFAF-45AA-A71A-9B9F0EF70D26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BC9838D-BFAF-45AA-A71A-9B9F0EF70D26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BC9838D-BFAF-45AA-A71A-9B9F0EF70D26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BC9838D-BFAF-45AA-A71A-9B9F0EF70D26}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {05639FF8-CED9-44F1-A94F-937ABA834B6C}
+	EndGlobalSection
+EndGlobal
