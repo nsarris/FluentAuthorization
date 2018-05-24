@@ -37,6 +37,32 @@ namespace FluentAuthorization
         }
 
 
+        public AssertionResult Assert<TPolicy>(Func<TPolicy, SecurityPolicy<TUserSecurityContext>.IPermission> permissionSelector)
+            where TPolicy : SecurityPolicy<TUserSecurityContext>
+        {
+            return WhenAll(a => a.Has(permissionSelector)).Assert();
+        }
+
+        public AssertionResult Assert<TPolicy, TInput>(Func<TPolicy, SecurityPolicy<TUserSecurityContext>.IPermission<TInput>> permissionSelector, TInput input)
+            where TPolicy : SecurityPolicy<TUserSecurityContext>
+        {
+            return WhenAll(a => a.Has(permissionSelector, input)).Assert();
+        }
+
+        public void Throw<TPolicy>(Func<TPolicy, SecurityPolicy<TUserSecurityContext>.IPermission> permissionSelector)
+            where TPolicy : SecurityPolicy<TUserSecurityContext>
+        {
+            WhenAll(a => a.Has(permissionSelector)).Throw();
+        }
+
+        public void Throw<TPolicy, TInput>(Func<TPolicy, SecurityPolicy<TUserSecurityContext>.IPermission<TInput>> permissionSelector, TInput input)
+            where TPolicy : SecurityPolicy<TUserSecurityContext>
+        {
+            WhenAll(a => a.Has(permissionSelector, input)).Throw();
+        }
+
+
+
         public PolicyAssertion<TUserSecurityContext> WhenAll(Func<AssertionContainer<TUserSecurityContext>, AssertionContainer<TUserSecurityContext>> assertions)
         {
             return new PolicyAssertion<TUserSecurityContext>(this, userSecurityContext, calculationStrategy).AndAll(assertions);

@@ -24,11 +24,11 @@ namespace Authorization.Policies
             }
         }
 
-        public IPermission View { get; }
-        public IPermission Add { get; }
-        public IPermission Update { get; }
-        public IPermission Remove { get; }
-        public IPermission<Account> ViewAccount { get; }
+        public IPermission View { get; private set; }
+        public IPermission Add { get; private set; }
+        public IPermission Update { get; private set; }
+        public IPermission Remove { get; private set; }
+        public IPermission<Account> ViewAccount { get; private set; }
 
         public CustomerAccountPolicy(CustomerAccountPolicyData data) : base(data)
         {

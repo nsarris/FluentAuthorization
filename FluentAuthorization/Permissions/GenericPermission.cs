@@ -78,7 +78,7 @@ namespace FluentAuthorization
 
             public override string GetDenialMessage(TUserSecurityContext user)
             {
-                return denialMessageBuilder == null ?
+                return denialMessageBuilder != null ?
                     denialMessageBuilder(Policy.Data , user) :
                     base.GetDenialMessage(user);
             }

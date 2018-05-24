@@ -11,7 +11,8 @@ namespace Authorization.Repositories
 {
     public class CustomerRepository
     {
-        private List<Customer> customers = new List<Customer>();
+        private List<Customer> customers = Customers.Get();
+
         private readonly UserSecuritySchema<MyUserSecurityContext> userSecuritySchema;
 
         public CustomerRepository(UserSecuritySchema<MyUserSecurityContext> userSecuritySchema)
@@ -21,21 +22,21 @@ namespace Authorization.Repositories
 
         public void Create(Customer customer)
         {
-            userSecuritySchema.WhenAll(a => a.Has<CustomerPolicy>(x => x.Create)).Throw();
+            userSecuritySchema.Throw<CustomerPolicy>(x => x.Create);
 
             customers.Add(customer);
         }
 
         public void Delete(Customer customer)
         {
-            userSecuritySchema.WhenAll(a => a.Has<CustomerPolicy>(x => x.Delete)).Throw();
+            userSecuritySchema.Throw<CustomerPolicy>(x => x.Delete);
 
             customers.RemoveAll(x => x.Id == customer.Id);
         }
 
         public void Update(Customer customer)
         {
-            userSecuritySchema.WhenAll(a => a.Has<CustomerPolicy>(x => x.Update)).Throw();
+            userSecuritySchema.Throw<CustomerPolicy>(x => x.Update);
 
             customers.RemoveAll(x => x.Id == customer.Id);
 
@@ -44,7 +45,7 @@ namespace Authorization.Repositories
 
         private Customer ApplySecurityFilter(Customer customer)
         {
-            if (userSecuritySchema.WhenAll(a => a.Has((CustomerPolicy x) => x.ViewRealName, customer)).Assert().Deny)
+            if (userSecuritySchema.Assert((CustomerPolicy x) => x.ViewRealName, customer).Deny)
                 customer.Name = "Name obfuscated";
 
             return customer;
@@ -54,7 +55,7 @@ namespace Authorization.Repositories
         {
             var customer = customers.Where(x => x.Id == id).FirstOrDefault();
 
-            userSecuritySchema.WhenAll(a => a.Has((CustomerPolicy x) => x.ViewCustomer, customer)).Throw();
+            userSecuritySchema.Throw((CustomerPolicy x) => x.ViewCustomer, customer);
 
             ApplySecurityFilter(customer);
 
@@ -68,8 +69,7 @@ namespace Authorization.Repositories
             return customers
                 .Where(customer =>
                         userSecuritySchema
-                        .WhenAll(a => a.Has((CustomerPolicy x) => x.ViewCustomer, customer))
-                        .Assert().Allow)
+                        .Assert((CustomerPolicy x) => x.ViewCustomer, customer).Allow)
                 .Select(ApplySecurityFilter)
                 .ToList();
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FluentAuthorization
 {
-    class PolicyAssertionException : UnauthorizedAccessException
+    public class PolicyAssertionException : UnauthorizedAccessException
     {
         public IEnumerable<EffectivePermission> DeniedPermissions { get; }
         //public object ErrorCode { get; }

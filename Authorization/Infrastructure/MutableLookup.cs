@@ -10,11 +10,6 @@ namespace Authorization
     {
         Dictionary<TKey, List<TValue>> data = new Dictionary<TKey, List<TValue>>();
 
-        public void Add((TKey key, TValue policy) item)
-        {
-            Add(item.key, item.policy);
-        }
-
         public void Add(TKey key, TValue policy)
         {
             if (!data.TryGetValue(key, out var list))

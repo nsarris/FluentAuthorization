@@ -35,12 +35,12 @@ namespace Authorization.Policies
             }
         }
 
-        public IPermission View { get; }
-        public IPermission Create { get; }
-        public IPermission Update { get; }
-        public IPermission Delete { get; }
-        public IPermission<Customer> ViewRealName { get; }
-        public IPermission<Customer> ViewCustomer { get; }
+        public IPermission View { get; private set; }
+        public IPermission Create { get; private set; }
+        public IPermission Update { get; private set; }
+        public IPermission Delete { get; private set; }
+        public IPermission<Customer> ViewRealName { get; private set; }
+        public IPermission<Customer> ViewCustomer { get; private set; }
 
         public CustomerPolicy(CustomerPolicyData data) : base(data)
         {
