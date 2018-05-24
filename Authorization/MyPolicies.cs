@@ -7,70 +7,17 @@ using System.Threading.Tasks;
 namespace Authorization
 {
 
-   
-    public enum Policies
-    {
-        [Code("ICE2ASDA")] AccessData = 0,
-        ValueProcessing = 1,
-    }
-
-    public class CodeAttribute : Attribute
-    {
-        public CodeAttribute(string key)
-        {
-
-        }
-    }
-
-
-    public class PolicyIdAttribute : Attribute
-    {
-        public Policies PolicyId { get; private set; }
-        public PolicyIdAttribute(Policies id)
-        {
-            PolicyId = id;
-        }
-    }
-
-    public abstract class MyPolicy : SecurityPolicy<MyUserSecurityContext>
-    {
-        public MyPolicy() 
-        {
-        }
-
-        public Policies Id { get; private set; }   //set from attribute on dictionary create
-    }
-
-    public abstract class MyPolicy<T> : SecurityPolicy<T, MyUserSecurityContext>
-        where T : PolicyData
-    {
-        public MyPolicy(T data) : base(data)
-        {
-        }
-
-        public Policies Id { get; private set; }   //set from attribute on dictionary create
-    }
-
-    //public abstract class MyPolicy : SecurityPolicy<NullMyUserSecurityContext>
-    //{
-
-    //}
-
-    public class PolicyValue<T>
-    {
-        T Value { get; set; }
-        bool IsSet { get; set; }
-    }
 
     
+   
+    
 
-    [PolicyId(Policies.ValueProcessing)]
+    [PolicyId(PolicyEnum.ValueProcessing)]
 
     public class ValueProcessing : MyPolicy<ValueProcessing.ValueProcessingData>
     {
         public class ValueProcessingData : PolicyData
         {
-            [Code("ALLOWADD")]
             public bool AllowView = true;
             //bool allowAdd = false;
             //bool allowUpdate = false;
@@ -154,7 +101,7 @@ namespace Authorization
         public bool Allow { get; set; } = false;
     }
 
-    [PolicyId(Policies.AccessData)]
+    [PolicyId(PolicyEnum.AccessData)]
     public class AccessData : MyPolicy<AccessDataData>
     {
         //bool allow { get; set; } = false;

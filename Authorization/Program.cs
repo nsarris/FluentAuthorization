@@ -9,20 +9,20 @@ namespace Authorization
     {
         static void Main(string[] args)
         {
-            var userPolicies = new PolicyLookup<MyUserSecurityContext>()
+            var userPolicies = new PolicyLookup<string, MyUserSecurityContext>()
             {
                 ("xd89", new ValueProcessing(new ValueProcessing.ValueProcessingData())),
                 ("xd89", new AccessData(new AccessDataData())),
             };
 
-            var groupPolicies = new PolicyLookup<MyUserSecurityContext>();
-            var rolePolicies = new PolicyLookup<MyUserSecurityContext>();
+            var groupPolicies = new PolicyLookup<string, MyUserSecurityContext>();
+            var rolePolicies = new PolicyLookup<RolesEnum, MyUserSecurityContext>();
 
             //var policyFactory = new MyPolicyFactory();
 
-            var userPolicyRepo = new SecurityObjectPolicyRepository<MyUserSecurityContext>(userPolicies);
-            var groupPolicyRepo = new SecurityObjectPolicyRepository<MyUserSecurityContext>(groupPolicies);
-            var rolePolicyRepo = new SecurityObjectPolicyRepository<MyUserSecurityContext>(rolePolicies);
+            var userPolicyRepo = new SecurityObjectPolicyRepository<string, MyUserSecurityContext>(userPolicies);
+            var groupPolicyRepo = new SecurityObjectPolicyRepository<string, MyUserSecurityContext>(groupPolicies);
+            var rolePolicyRepo = new SecurityObjectPolicyRepository<RolesEnum, MyUserSecurityContext>(rolePolicies);
             //    new MyPolicyFactory(),
             //    new Lookup<string, SecurityPolicy>() { "test",new ValueProcessing() })
 

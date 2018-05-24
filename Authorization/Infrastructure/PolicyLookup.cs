@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Authorization
 {
-    public class PolicyLookup<TUserSecurityContext> : MutableLookup<string, SecurityPolicy<TUserSecurityContext>>
+    public class PolicyLookup<TKey, TUserSecurityContext> : MutableLookup<TKey, SecurityPolicy<TUserSecurityContext>>
     {
     }
 }

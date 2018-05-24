@@ -8,33 +8,33 @@ namespace Authorization
 
     public class PolicyRepository: IPolicyRepository<MyUserSecurityContext>
     {
-        readonly SecurityObjectPolicyRepository<MyUserSecurityContext> userPolicies;
-        readonly SecurityObjectPolicyRepository<MyUserSecurityContext> groupPolicies;
-        readonly SecurityObjectPolicyRepository<MyUserSecurityContext> rolePolicies;
+        readonly SecurityObjectPolicyRepository<string, MyUserSecurityContext> userPolicies;
+        readonly SecurityObjectPolicyRepository<string, MyUserSecurityContext> groupPolicies;
+        readonly SecurityObjectPolicyRepository<RolesEnum, MyUserSecurityContext> rolePolicies;
         
         public PolicyRepository(
-            SecurityObjectPolicyRepository<MyUserSecurityContext> userPolicies,
-            SecurityObjectPolicyRepository<MyUserSecurityContext> groupPolicies,
-            SecurityObjectPolicyRepository<MyUserSecurityContext> rolePolicies)
+            SecurityObjectPolicyRepository<string, MyUserSecurityContext> userPolicies,
+            SecurityObjectPolicyRepository<string, MyUserSecurityContext> groupPolicies,
+            SecurityObjectPolicyRepository<RolesEnum, MyUserSecurityContext> rolePolicies)
         {
             this.userPolicies = userPolicies;
             this.groupPolicies = groupPolicies;
             this.rolePolicies = rolePolicies;
         }
 
-        public List<SecurityPolicy<MyUserSecurityContext>> GetByRole(string roleId)
+        public List<SecurityPolicy<MyUserSecurityContext>> GetByRole(RolesEnum role)
         {
-            return rolePolicies[roleId].ToList();
+            return rolePolicies[role].ToList();
         }
 
-        public List<SecurityPolicy<MyUserSecurityContext>> GetByRole(Type policyType, string roleId)
+        public List<SecurityPolicy<MyUserSecurityContext>> GetByRole(Type policyType, RolesEnum role)
         {
-            return rolePolicies[roleId].Where(x => x.GetType() == policyType).ToList();
+            return rolePolicies[role].Where(x => x.GetType() == policyType).ToList();
         }
 
-        public List<T> GetByRole<T>(string roleId) where T : SecurityPolicy<MyUserSecurityContext>
+        public List<T> GetByRole<T>(RolesEnum role) where T : SecurityPolicy<MyUserSecurityContext>
         {
-            return rolePolicies[roleId].OfType<T>().ToList();
+            return rolePolicies[role].OfType<T>().ToList();
         }
 
         public List<SecurityPolicy<MyUserSecurityContext>> GetByUser(string userId)
@@ -42,14 +42,14 @@ namespace Authorization
             return userPolicies[userId].ToList();
         }
 
-        public List<SecurityPolicy<MyUserSecurityContext>> GetByUser(string userId, IEnumerable<string> userGroupIds, IEnumerable<string> roleIds)
+        public List<SecurityPolicy<MyUserSecurityContext>> GetByUser(string userId, IEnumerable<string> userGroupIds, IEnumerable<RolesEnum> roles)
         {
             var policies = userPolicies[userId];
             if (userGroupIds != null)
                 foreach (var group in userGroupIds)
                     policies.Concat(groupPolicies[group]);
-            if (roleIds != null)
-                foreach (var role in roleIds)
+            if (roles != null)
+                foreach (var role in roles)
                     policies.Concat(rolePolicies[role]);
 
             return policies.Distinct().ToList();
@@ -60,14 +60,14 @@ namespace Authorization
             return userPolicies[userId].Where(x => x.GetType() == policyType).ToList();
         }
 
-        public List<SecurityPolicy<MyUserSecurityContext>> GetByUser(Type policyType, string userId, IEnumerable<string> userGroupIds, IEnumerable<string> roleIds)
+        public List<SecurityPolicy<MyUserSecurityContext>> GetByUser(Type policyType, string userId, IEnumerable<string> userGroupIds, IEnumerable<RolesEnum> roles)
         {
             var policies = userPolicies[userId].Where(x => x.GetType() == policyType);
             if (userGroupIds != null)
                 foreach (var group in userGroupIds)
                     policies.Concat(groupPolicies[group].Where(x => x.GetType() == policyType));
-            if (roleIds != null)
-                foreach (var role in roleIds)
+            if (roles != null)
+                foreach (var role in roles)
                     policies.Concat(rolePolicies[role].Where(x => x.GetType() == policyType));
 
             return policies.Distinct().ToList();
@@ -78,9 +78,9 @@ namespace Authorization
             return userPolicies[userId].OfType<T>().ToList();
         }
 
-        public List<T> GetByUser<T>(string userId, IEnumerable<string> userGroupIds, IEnumerable<string> roleIds) where T : SecurityPolicy<MyUserSecurityContext>
+        public List<T> GetByUser<T>(string userId, IEnumerable<string> userGroupIds, IEnumerable<RolesEnum> roles) where T : SecurityPolicy<MyUserSecurityContext>
         {
-            return GetByUser(typeof(T), userId, userGroupIds, roleIds).Cast<T>().ToList();
+            return GetByUser(typeof(T), userId, userGroupIds, roles).Cast<T>().ToList();
         }
 
         public List<SecurityPolicy<MyUserSecurityContext>> GetByUserGroup(string userGroupId)
@@ -100,17 +100,17 @@ namespace Authorization
 
         public List<SecurityPolicy<MyUserSecurityContext>> GetByUserSecurityContext(MyUserSecurityContext securityContext)
         {
-            return GetByUser(securityContext.UserId, securityContext.GroupIds, securityContext.RoleIds);
+            return GetByUser(securityContext.UserId, securityContext.GroupIds, securityContext.Roles);
         }
 
         public List<SecurityPolicy<MyUserSecurityContext>> GetByUserSecurityContext(Type policyType, MyUserSecurityContext securityContext)
         {
-            return GetByUser(policyType, securityContext.UserId, securityContext.GroupIds, securityContext.RoleIds);
+            return GetByUser(policyType, securityContext.UserId, securityContext.GroupIds, securityContext.Roles);
         }
 
         public List<T> GetByUserSecurityContext<T>(MyUserSecurityContext securityContext) where T : SecurityPolicy<MyUserSecurityContext>
         {
-            return GetByUser(typeof(T), securityContext.UserId, securityContext.GroupIds, securityContext.RoleIds).Cast<T>().ToList();
+            return GetByUser(typeof(T), securityContext.UserId, securityContext.GroupIds, securityContext.Roles).Cast<T>().ToList();
         }
     }
 

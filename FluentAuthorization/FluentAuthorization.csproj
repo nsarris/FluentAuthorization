@@ -50,6 +50,7 @@
     <Compile Include="Permissions\GenericAdvancedPermission.cs" />
     <Compile Include="Permissions\GenericPermissionT.cs" />
     <Compile Include="Permissions\GenericPermission.cs" />
+    <Compile Include="Permissions\PermissionBuilderWithInput.cs" />
     <Compile Include="Permissions\PermissionT.cs" />
     <Compile Include="Permissions\Permission.cs" />
     <Compile Include="Permissions\PermissionBaseT.cs" />

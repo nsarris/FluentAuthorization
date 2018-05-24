@@ -43,13 +43,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Account.cs" />
+    <Compile Include="Model\Customer.cs" />
+    <Compile Include="Model\Product.cs" />
     <Compile Include="MyPolicies.cs" />
-    <Compile Include="MutableLookup.cs" />
+    <Compile Include="Infrastructure\MutableLookup.cs" />
+    <Compile Include="MyPolicy.cs" />
     <Compile Include="MyUserSecurityContext.cs" />
-    <Compile Include="PolicyLookup.cs" />
+    <Compile Include="Policies\CustomerAccountPolicy.cs" />
+    <Compile Include="Policies\CustomerPolicy.cs" />
+    <Compile Include="Infrastructure\PolicyLookup.cs" />
     <Compile Include="PolicyRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\CustomerRepository.cs" />
     <Compile Include="SecurityObjectPolicyRepository.cs" />
   </ItemGroup>
   <ItemGroup>
