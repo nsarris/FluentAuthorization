@@ -53,7 +53,7 @@ namespace FluentAuthorization
             public IPermission<TInput> Build()
             {
                 if (assertionFunc == null && advancedAssertionFunc == null)
-                    throw new Exception("Assertion function not set, cannot build Permission");
+                    throw new InvalidOperationException("Assertion function not set, cannot build Permission");
 
                 if (assertionFunc != null)
                     return new GenericPermission<TInput>(policy, name, assertionFunc, messageBuilder);
@@ -141,7 +141,7 @@ namespace FluentAuthorization
             public IPermission<TInput> Build()
             {
                 if (assertionFunc == null && advancedAssertionFunc == null)
-                    throw new Exception("Assertion function not set, cannot build Permission");
+                    throw new InvalidOperationException("Assertion function not set, cannot build Permission");
 
                 if (assertionFunc != null)
                     return new GenericPermission<TInput>(policy, name, assertionFunc, messageBuilder);

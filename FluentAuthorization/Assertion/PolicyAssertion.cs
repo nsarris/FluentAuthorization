@@ -42,7 +42,7 @@ namespace FluentAuthorization
             return assertionContainer.Assert();
         }
 
-        public void Throw()
+        public void ThowOnDeny()
         {
             var assertionResult = assertionContainer.Assert();
             if (assertionResult.Deny)

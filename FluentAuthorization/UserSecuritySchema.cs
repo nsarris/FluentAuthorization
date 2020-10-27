@@ -4,16 +4,15 @@ using System.Linq;
 
 namespace FluentAuthorization
 {
-    public partial class UserSecuritySchema<TUserSecurityContext>
+    public partial class UserSecuritySchema<T>
     {
-        readonly TUserSecurityContext userSecurityContext;
-        readonly List<SecurityPolicy<TUserSecurityContext>> policies = new List<SecurityPolicy<TUserSecurityContext>>();
-        readonly IPolicyRepository<TUserSecurityContext> policyRepository;
-        readonly IPermissionCalculationStrategy calculationStrategy;
+        private readonly T userSecurityContext;
+        private readonly IPolicyRepository<T> policyRepository;
+        private readonly IPermissionCalculationStrategy calculationStrategy;
         
         public UserSecuritySchema(
-            IPolicyRepository<TUserSecurityContext> policyRepository, 
-            TUserSecurityContext userSecurityContext)
+            IPolicyRepository<T> policyRepository,
+            T userSecurityContext)
         {
             this.policyRepository = policyRepository;
             this.userSecurityContext = userSecurityContext;
@@ -21,56 +20,52 @@ namespace FluentAuthorization
         }
 
         public UserSecuritySchema(
-            IPolicyRepository<TUserSecurityContext> policyRepository,
-            TUserSecurityContext securityContext,
+            IPolicyRepository<T> policyRepository,
+            T securityContext,
             IPermissionCalculationStrategy calculationStrategy)
             :this(policyRepository, securityContext)
         {
             this.calculationStrategy = calculationStrategy;
         }
 
-
         public IEnumerable<TPolicy> GetPolicies<TPolicy>() 
-            where TPolicy : SecurityPolicy<TUserSecurityContext>
+            where TPolicy : SecurityPolicy<T>
         {
             return policyRepository.GetByUserSecurityContext(userSecurityContext).OfType<TPolicy>();
         }
 
-
-        public AssertionResult Assert<TPolicy>(Func<TPolicy, SecurityPolicy<TUserSecurityContext>.IPermission> permissionSelector)
-            where TPolicy : SecurityPolicy<TUserSecurityContext>
+        public AssertionResult Assert<TPolicy>(Func<TPolicy, SecurityPolicy<T>.IPermission> permissionSelector)
+            where TPolicy : SecurityPolicy<T>
         {
             return WhenAll(a => a.Has(permissionSelector)).Assert();
         }
 
-        public AssertionResult Assert<TPolicy, TInput>(Func<TPolicy, SecurityPolicy<TUserSecurityContext>.IPermission<TInput>> permissionSelector, TInput input)
-            where TPolicy : SecurityPolicy<TUserSecurityContext>
+        public AssertionResult Assert<TPolicy, TInput>(Func<TPolicy, SecurityPolicy<T>.IPermission<TInput>> permissionSelector, TInput input)
+            where TPolicy : SecurityPolicy<T>
         {
             return WhenAll(a => a.Has(permissionSelector, input)).Assert();
         }
 
-        public void Throw<TPolicy>(Func<TPolicy, SecurityPolicy<TUserSecurityContext>.IPermission> permissionSelector)
-            where TPolicy : SecurityPolicy<TUserSecurityContext>
+        public void ThrowOnDeny<TPolicy>(Func<TPolicy, SecurityPolicy<T>.IPermission> permissionSelector)
+            where TPolicy : SecurityPolicy<T>
         {
-            WhenAll(a => a.Has(permissionSelector)).Throw();
+            WhenAll(a => a.Has(permissionSelector)).ThowOnDeny();
         }
 
-        public void Throw<TPolicy, TInput>(Func<TPolicy, SecurityPolicy<TUserSecurityContext>.IPermission<TInput>> permissionSelector, TInput input)
-            where TPolicy : SecurityPolicy<TUserSecurityContext>
+        public void ThrowOnDeny<TPolicy, TInput>(Func<TPolicy, SecurityPolicy<T>.IPermission<TInput>> permissionSelector, TInput input)
+            where TPolicy : SecurityPolicy<T>
         {
-            WhenAll(a => a.Has(permissionSelector, input)).Throw();
+            WhenAll(a => a.Has(permissionSelector, input)).ThowOnDeny();
         }
 
-
-
-        public PolicyAssertion<TUserSecurityContext> WhenAll(Func<AssertionContainer<TUserSecurityContext>, AssertionContainer<TUserSecurityContext>> assertions)
+        public PolicyAssertion<T> WhenAll(Func<AssertionContainer<T>, AssertionContainer<T>> assertions)
         {
-            return new PolicyAssertion<TUserSecurityContext>(this, userSecurityContext, calculationStrategy).AndAll(assertions);
+            return new PolicyAssertion<T>(this, userSecurityContext, calculationStrategy).AndAll(assertions);
         }
 
-        public PolicyAssertion<TUserSecurityContext> WhenAny(Func<AssertionContainer<TUserSecurityContext>, AssertionContainer<TUserSecurityContext>> assertions)
+        public PolicyAssertion<T> WhenAny(Func<AssertionContainer<T>, AssertionContainer<T>> assertions)
         {
-            return new PolicyAssertion<TUserSecurityContext>(this, userSecurityContext, calculationStrategy).AndAny(assertions);
+            return new PolicyAssertion<T>(this, userSecurityContext, calculationStrategy).AndAny(assertions);
         }
     }
 }

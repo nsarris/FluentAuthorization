@@ -22,7 +22,7 @@
     }
 
     public abstract partial class SecurityPolicy<T, TUserSecurityContext> : SecurityPolicy<TUserSecurityContext>
-    where T : PolicyData
+        where T : PolicyData
     {
         public new interface IPermission : SecurityPolicy<TUserSecurityContext>.IPermission
         {

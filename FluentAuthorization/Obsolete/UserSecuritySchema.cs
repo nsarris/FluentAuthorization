@@ -21,7 +21,7 @@
 //        //    if (policy == null) throw new ArgumentNullException(nameof(policy));
 
 //        //    if (policies.Any(x => x.GetType() == policy.GetType()))
-//        //        throw new Exception("Policy of type " + policy.GetType().Name + " already exists.");
+//        //        throw new InvalidOperationException("Policy of type " + policy.GetType().Name + " already exists.");
 
 //        //    policies.Add(policy);
 //        //}

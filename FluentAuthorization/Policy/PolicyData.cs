@@ -33,7 +33,7 @@ namespace FluentAuthorization
         public virtual PolicyData Merge(PolicyData next)
         {
             if (this.GetType() != next.GetType())
-                throw new Exception("Cannot merge policy data of different types");
+                throw new InvalidOperationException("Cannot merge policy data of different types");
 
             if (next == null)
                 return this;
@@ -42,13 +42,13 @@ namespace FluentAuthorization
             var nextValues = next.GetValues().ToList();
 
             if (currentValues.Count != nextValues.Count)
-                throw new Exception($"Policy value count mismatch when trying to merge policy data of type {this.GetType().Name}");
+                throw new InvalidOperationException($"Policy value count mismatch when trying to merge policy data of type {this.GetType().Name}");
 
             var effectiveValues = new List<KeyValuePair<string, object>>();
             foreach (var items in currentValues.Zip(nextValues, (x, y) => new { Current = x, Next = y }))
             {
                 if (items.Current.Key != items.Next.Key)
-                    throw new Exception($"Policy value sequence mismatch for data of type {this.GetType().Name}");
+                    throw new InvalidOperationException($"Policy value sequence mismatch for data of type {this.GetType().Name}");
 
                 object v = null;
                 if (items.Current.Value == null && items.Next.Value == null)
@@ -58,7 +58,7 @@ namespace FluentAuthorization
                 else
                 {
                     if (items.Current.Value.GetType() != items.Next.Value.GetType())
-                        throw new Exception($"Policy value type mismatch for data of type {this.GetType().Name}");
+                        throw new InvalidOperationException($"Policy value type mismatch for data of type {this.GetType().Name}");
 
                     if (typeof(IConfigurable).IsAssignableFrom(items.Current.Value.GetType()))
                     {
@@ -81,9 +81,9 @@ namespace FluentAuthorization
             result.SetValues(effectiveValues);
 
             //if (result == null)
-            //    throw new Exception($"Null result returned from PolicyData CreateNew for data of type {this.GetType().Name}");
+            //    throw new InvalidOperationException($"Null result returned from PolicyData CreateNew for data of type {this.GetType().Name}");
             //if (result.GetType() != this.GetType())
-            //    throw new Exception($"Different type returned from PolicyData CreateNew for data of type {this.GetType().Name}");
+            //    throw new InvalidOperationException($"Different type returned from PolicyData CreateNew for data of type {this.GetType().Name}");
 
             return result;
         }

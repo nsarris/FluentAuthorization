@@ -26,10 +26,10 @@ namespace FluentAuthorization
                 var policy = policyFactory.Create(typeof(T), data);
 
                 if (policy == null)
-                    throw new Exception($"Null policy returned from policy factory for policy type {typeof(T).Name}");
+                    throw new InvalidOperationException($"Null policy returned from policy factory for policy type {typeof(T).Name}");
 
                 if (policy.GetType() != typeof(T))
-                    throw new Exception($"Policy factory for policy type {typeof(T).Name} returned a different type ({policy.GetType().Name}");
+                    throw new InvalidOperationException($"Policy factory for policy type {typeof(T).Name} returned a different type ({policy.GetType().Name}");
 
                 return assertion((T)policy);
             }

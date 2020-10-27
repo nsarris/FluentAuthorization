@@ -14,24 +14,24 @@
 //        public virtual IPolicyData Merge(IPolicyData current, IPolicyData next)
 //        {
 //            if (current == null && next == null)
-//                throw new Exception("Cannot merge null policy data");
+//                throw new InvalidOperationException("Cannot merge null policy data");
 //            else if (current == null || next == null)
 //                return current ?? next;
 
 //            if (current.GetType() != next.GetType())
-//                throw new Exception("Cannot merge policy data of different types");
+//                throw new InvalidOperationException("Cannot merge policy data of different types");
 
 //            var currentValues = current.GetValues().ToList();
 //            var nextValues = next.GetValues().ToList();
 
 //            if (currentValues.Count != nextValues.Count)
-//                throw new Exception($"Policy value count mismatch when trying to merge policy data of type {this.GetType().Name}");
+//                throw new InvalidOperationException($"Policy value count mismatch when trying to merge policy data of type {this.GetType().Name}");
 
 //            var effectiveValues = new List<KeyValuePair<string, object>>();
 //            foreach(var items in currentValues.Zip(nextValues, (x,y) => new { Current = x, Next = y }))
 //            {
 //                if (items.Current.Key != items.Next.Key)
-//                    throw new Exception($"Policy value sequence mismatch for data of type {this.GetType().Name}");
+//                    throw new InvalidOperationException($"Policy value sequence mismatch for data of type {this.GetType().Name}");
 
 //                object v = null;
 //                if (items.Current.Value == null && items.Next.Value == null)
@@ -41,7 +41,7 @@
 //                else
 //                {
 //                    if (items.Current.Value.GetType() != items.Next.Value.GetType())
-//                        throw new Exception($"Policy value type mismatch for data of type {this.GetType().Name}");
+//                        throw new InvalidOperationException($"Policy value type mismatch for data of type {this.GetType().Name}");
 
 //                    if (typeof(IConfigurable).IsAssignableFrom(items.Current.Value.GetType()))
 //                    {
@@ -63,9 +63,9 @@
 //            var result = current.CreateNew(effectiveValues);
 
 //            if (result == null)
-//                throw new Exception($"Null result returned from PolicyData CreateNew for data of type {this.GetType().Name}");
+//                throw new InvalidOperationException($"Null result returned from PolicyData CreateNew for data of type {this.GetType().Name}");
 //            if (result.GetType() != this.GetType())
-//                throw new Exception($"Different type returned from PolicyData CreateNew for data of type {this.GetType().Name}");
+//                throw new InvalidOperationException($"Different type returned from PolicyData CreateNew for data of type {this.GetType().Name}");
 
 //            return result;
 //        }

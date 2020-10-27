@@ -22,21 +22,21 @@ namespace Authorization.Repositories
 
         public void Create(Customer customer)
         {
-            userSecuritySchema.Throw<CustomerPolicy>(x => x.Create);
+            userSecuritySchema.ThrowOnDeny<CustomerPolicy>(x => x.Create);
 
             customers.Add(customer);
         }
 
         public void Delete(Customer customer)
         {
-            userSecuritySchema.Throw<CustomerPolicy>(x => x.Delete);
+            userSecuritySchema.ThrowOnDeny<CustomerPolicy>(x => x.Delete);
 
             customers.RemoveAll(x => x.Id == customer.Id);
         }
 
         public void Update(Customer customer)
         {
-            userSecuritySchema.Throw<CustomerPolicy>(x => x.Update);
+            userSecuritySchema.ThrowOnDeny<CustomerPolicy>(x => x.Update);
 
             customers.RemoveAll(x => x.Id == customer.Id);
 
@@ -55,7 +55,7 @@ namespace Authorization.Repositories
         {
             var customer = customers.Where(x => x.Id == id).FirstOrDefault();
 
-            userSecuritySchema.Throw((CustomerPolicy x) => x.ViewCustomer, customer);
+            userSecuritySchema.ThrowOnDeny((CustomerPolicy x) => x.ViewCustomer, customer);
 
             ApplySecurityFilter(customer);
 
@@ -64,7 +64,7 @@ namespace Authorization.Repositories
 
         public List<Customer> Get()
         {
-            userSecuritySchema.WhenAll(a => a.Has<CustomerPolicy>(x => x.View)).Throw();
+            userSecuritySchema.WhenAll(a => a.Has<CustomerPolicy>(x => x.View)).ThowOnDeny();
 
             return customers
                 .Where(customer =>

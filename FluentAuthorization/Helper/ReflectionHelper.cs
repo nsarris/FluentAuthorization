@@ -17,7 +17,7 @@ namespace FluentAuthorization
             if (expression.Body is MemberExpression member)
             {
                 if (member.Expression.Type != typeof(T))
-                    throw new Exception("Property " + member.Member.Name + " is not a member of type " + typeof(T).Name);
+                    throw new InvalidOperationException("Property " + member.Member.Name + " is not a member of type " + typeof(T).Name);
 
                 return member.Member as PropertyInfo;
             }

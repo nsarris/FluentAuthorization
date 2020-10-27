@@ -40,8 +40,6 @@ namespace FluentAuthorization
                     denialMessageBuilder(user) :
                     base.GetDenialMessage(user);
             }
-
-
         }
     }
 
@@ -71,7 +69,8 @@ namespace FluentAuthorization
                     Allow = success,
                     Policy = Policy,
                     Permission = this,
-                    DenialMessage = success ? null : GetDenialMessage(user)
+                    DenialMessage = success ? null : GetDenialMessage(user),
+                    Metadata = Policy.Data
                 };
                 return new AssertionResult(r);
             }

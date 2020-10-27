@@ -7,14 +7,14 @@ namespace FluentAuthorization
     {
         public sealed class PermissionBuilder
         {
-            string name;
-            Func<TUserSecurityContext, bool> assertionFunc;
-            Func<TUserSecurityContext, PermissionResult> advancedAssertionFunc;
-            Func<TUserSecurityContext, string> messageBuilder;
+            private string name;
+            private Func<TUserSecurityContext, bool> assertionFunc;
+            private Func<TUserSecurityContext, PermissionResult> advancedAssertionFunc;
+            private Func<TUserSecurityContext, string> messageBuilder;
             
-            SecurityPolicy<TUserSecurityContext> policy;
-            PropertyInfo permissionProperty;
-
+            private readonly SecurityPolicy<TUserSecurityContext> policy;
+            private readonly PropertyInfo permissionProperty;
+            
             internal PermissionBuilder(SecurityPolicy<TUserSecurityContext> policy, PropertyInfo PermissionProperty)
             {
                 this.policy = policy;
@@ -53,7 +53,7 @@ namespace FluentAuthorization
             public IPermission Build()
             {
                 if (assertionFunc == null && advancedAssertionFunc == null)
-                    throw new Exception("Assertion function not set, cannot build Permission");
+                    throw new InvalidOperationException("Assertion function not set, cannot build Permission");
 
                 if (assertionFunc != null)
                     return new GenericPermission(policy, name, assertionFunc, messageBuilder);
@@ -68,7 +68,6 @@ namespace FluentAuthorization
 
                 var permission = Build();
 
-                //PermissionProperty.SetValue(policy, Permission);
                 ReflectionHelper.SetValue(permissionProperty, policy, permission);
 
                 return permission;
@@ -81,13 +80,10 @@ namespace FluentAuthorization
 
                 var permission = new LazyPermission(policy, () => lazyBuilder(this).BuildAndSet());
 
-                //permissionProperty.SetValue(policy, Permission);
                 ReflectionHelper.SetValue(permissionProperty, policy, permission);
 
                 return permission;
             }
-
-
         }
     }
 
@@ -95,13 +91,13 @@ namespace FluentAuthorization
     {
         public new sealed class PermissionBuilder
         {
-            string name;
-            Func<T, TUserSecurityContext, bool> assertionFunc;
-            Func<T, TUserSecurityContext, PermissionResult> advancedAssertionFunc;
-            Func<T, TUserSecurityContext, string> messageBuilder;
-
-            SecurityPolicy<T, TUserSecurityContext> policy;
-            PropertyInfo permissionProperty;
+            private string name;
+            private Func<T, TUserSecurityContext, bool> assertionFunc;
+            private Func<T, TUserSecurityContext, PermissionResult> advancedAssertionFunc;
+            private Func<T, TUserSecurityContext, string> messageBuilder;
+            
+            private readonly SecurityPolicy<T, TUserSecurityContext> policy;
+            private readonly PropertyInfo permissionProperty;
 
             internal PermissionBuilder(SecurityPolicy<T, TUserSecurityContext> policy, PropertyInfo PermissionProperty)
             {
@@ -141,7 +137,7 @@ namespace FluentAuthorization
             public IPermission Build()
             {
                 if (assertionFunc == null && advancedAssertionFunc == null)
-                    throw new Exception("Assertion function not set, cannot build Permission");
+                    throw new InvalidOperationException("Assertion function not set, cannot build Permission");
 
                 if (assertionFunc != null)
                     return new GenericPermission(policy, name, assertionFunc, messageBuilder);
@@ -156,7 +152,6 @@ namespace FluentAuthorization
 
                 var permission = Build();
 
-                //permissionProperty.SetValue(policy, Permission);
                 ReflectionHelper.SetValue(permissionProperty, policy, permission);
 
                 return permission;
@@ -169,13 +164,10 @@ namespace FluentAuthorization
 
                 var permission = new LazyPermission(policy, () => lazyBuilder(this).BuildAndSet());
 
-                //permissionProperty.SetValue(policy, Permission);
                 ReflectionHelper.SetValue(permissionProperty, policy, permission);
 
                 return permission;
             }
-
-
         }
     }
 }

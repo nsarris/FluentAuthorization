@@ -4,7 +4,7 @@
     {
         public abstract class AdvancedPermission : PermissionBase
         {
-            public AdvancedPermission(SecurityPolicy<TUserSecurityContext> policy) : base(policy)
+            protected AdvancedPermission(SecurityPolicy<TUserSecurityContext> policy) : base(policy)
             {
             }
 
@@ -22,7 +22,7 @@
     {
         public abstract new class AdvancedPermission : PermissionBase
         {
-            public AdvancedPermission(SecurityPolicy<T,TUserSecurityContext> policy) : base(policy)
+            protected AdvancedPermission(SecurityPolicy<T,TUserSecurityContext> policy) : base(policy)
             {
             }
 

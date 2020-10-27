@@ -4,15 +4,15 @@ using System.Collections.Generic;
 
 namespace FluentAuthorization
 {
-
     public sealed class AssertionContainer<TUserSecurityContext> : IAssertable
     {
         Func<string> errorBuilder;
         readonly UserSecuritySchema<TUserSecurityContext> policyProvider;
         readonly List<Func<UserSecuritySchema<TUserSecurityContext>, IAssertable>> permissionProducers = new List<Func<UserSecuritySchema<TUserSecurityContext>, IAssertable>>();
-        readonly LogicalOperator logicalOperator = LogicalOperator.And;
+        readonly LogicalOperator logicalOperator;
         readonly IPermissionCalculationStrategy calculationStrategy;
         readonly TUserSecurityContext userSecurityContext;
+
         internal AssertionContainer(UserSecuritySchema<TUserSecurityContext> policyProvider, TUserSecurityContext userSecurityContext, LogicalOperator logicalOperator, IPermissionCalculationStrategy calculationStrategy)
         {
             this.policyProvider = policyProvider;
@@ -21,25 +21,25 @@ namespace FluentAuthorization
             this.userSecurityContext = userSecurityContext;
         }
 
-        public AssertionContainer<TUserSecurityContext> Has<T>(Func<T, SecurityPolicy<TUserSecurityContext>.IPermission> permissionSelector)
+        public AssertionContainer<TUserSecurityContext> Has<T>(Func<T, SecurityPolicy<TUserSecurityContext>.IPermission> getPermission)
             where T : SecurityPolicy<TUserSecurityContext>
         {
-            permissionProducers.Add(validator =>
+            permissionProducers.Add(_ =>
                 new ResolvedPolicyAssertion(
                     calculationStrategy.Calculate(
                         policyProvider.GetPolicies<T>(), 
-                        (T p) => permissionSelector(p).Assert(userSecurityContext))));
+                        (T p) => getPermission(p).Assert(userSecurityContext))));
             return this;
         }
 
-        public AssertionContainer<TUserSecurityContext> Has<T, TInput>(Func<T, SecurityPolicy<TUserSecurityContext>.IPermission<TInput>> permissionSelector, TInput input)
+        public AssertionContainer<TUserSecurityContext> Has<T, TInput>(Func<T, SecurityPolicy<TUserSecurityContext>.IPermission<TInput>> getPermission, TInput input)
             where T : SecurityPolicy<TUserSecurityContext>
         {
-            permissionProducers.Add(validator =>
+            permissionProducers.Add(_ =>
                 new ResolvedPolicyAssertion(
                     calculationStrategy.Calculate(
                         policyProvider.GetPolicies<T>(), 
-                        (T p) => permissionSelector(p).Assert(userSecurityContext, input))));
+                        (T p) => getPermission(p).Assert(userSecurityContext, input))));
             return this;
         }
 
@@ -60,26 +60,26 @@ namespace FluentAuthorization
         //    return this;
         //}
 
-        public AssertionContainer<TUserSecurityContext> Has<T>(Func<T, Func<UserSecuritySchema<TUserSecurityContext>, IAssertable>> assertion)
+        public AssertionContainer<TUserSecurityContext> Has<T>(Func<T, Func<UserSecuritySchema<TUserSecurityContext>, IAssertable>> getAssertion)
             where T : SecurityPolicy<TUserSecurityContext>
         {
-            permissionProducers.Add(validator =>
+            permissionProducers.Add(schema =>
                 new ResolvedPolicyAssertion(
                     calculationStrategy.Calculate(
                         policyProvider.GetPolicies<T>(),
-                        p => assertion(p)(validator).Assert())));
+                        p => getAssertion(p)(schema).Assert())));
             return this;
         }
 
 
-        public AssertionContainer<TUserSecurityContext> Has<T, TInput>(Func<T, Func<UserSecuritySchema<TUserSecurityContext>, TInput, IAssertable>> assertion, TInput input)
+        public AssertionContainer<TUserSecurityContext> Has<T, TInput>(Func<T, Func<UserSecuritySchema<TUserSecurityContext>, TInput, IAssertable>> getAssertion, TInput input)
             where T : SecurityPolicy<TUserSecurityContext>
         {
-            permissionProducers.Add(validator =>
+            permissionProducers.Add(schema =>
                 new ResolvedPolicyAssertion(
                     calculationStrategy.Calculate(
                         policyProvider.GetPolicies<T>(), 
-                        p => assertion(p)(validator, input).Assert())));
+                        p => getAssertion(p)(schema, input).Assert())));
             return this;
         }
         public AssertionContainer<TUserSecurityContext> Has(Func<UserSecuritySchema<TUserSecurityContext>, IAssertable> assertion)
