@@ -22,43 +22,34 @@ namespace SampleApplication.Authorization.Repositories
 
         private Task<IPolicyContext<CustomerPolicy>> GetSecurityContext()
             => policyContextProvider
-                .ForUser(null)
+                //.ForUser(null)
                 .ForResource(EntityTypeResource.Customer)
                 .ForPolicy<CustomerPolicy>()
                 .BuildContextAsync();
 
         public async Task CreateAsync(Customer customer)
         {
-            //policyContextProvider.ThrowOnDeny<CustomerPolicy>(x => x.Create);
-
             var policyContext = await GetSecurityContext();
 
-            if (!policyContext.Assert(x => x.Create))
-                throw new InvalidOperationException();
+            policyContext.ThrowOnDeny(x => x.Create);
 
             customers.Add(customer);
         }
 
         public async Task DeleteAsync(Customer customer)
         {
-            //policyContextProvider.ThrowOnDeny<CustomerPolicy>(x => x.Delete);
-
             var policyContext = await GetSecurityContext();
 
-            if (!policyContext.Assert(x => x.Delete))
-                throw new InvalidOperationException();
+            policyContext.ThrowOnDeny(x => x.Delete);
 
             customers.RemoveAll(x => x.Id == customer.Id);
         }
 
         public async Task UpdateAsync(Customer customer)
         {
-            //policyContextProvider.ThrowOnDeny<CustomerPolicy>(x => x.Update);
-
             var policyContext = await GetSecurityContext();
 
-            if (!policyContext.Assert(x => x.Update))
-                throw new InvalidOperationException();
+            policyContext.ThrowOnDeny(x => x.Update);
 
             customers.RemoveAll(x => x.Id == customer.Id);
 
@@ -84,13 +75,11 @@ namespace SampleApplication.Authorization.Repositories
         {
             var policyContext = await GetSecurityContext();
 
-            if (!policyContext.Assert(x => x.View))
-                throw new InvalidOperationException();
+            policyContext.ThrowOnDeny(x => x.View);
 
             var customer = customers.Where(x => x.Id == id).FirstOrDefault();
 
-            if (!policyContext.Assert(x => x.ViewCustomer, customer))
-                throw new InvalidOperationException();
+            policyContext.ThrowOnDeny(x => x.ViewCustomer, customer);
 
             //ApplySecurityFilter(customer);
 

@@ -25,18 +25,18 @@ namespace FluentAuthorization
 
         //TData IPolicyContextDataInternal<TData>.Data => Data;
 
-        public AssertionResult Assert(Func<T, Policy<TUser, TResource, TData>.Permission> select)
-        {
-            var permission = select(Policy);
+        //public AssertionResult Assert(Func<T, Policy<TUser, TResource, TData>.Permission> select)
+        //{
+        //    var permission = select(Policy);
 
-            return permission.Assert(new Policy<TUser, TResource, TData>.AssertionContext(user, Data, serviceProvider));
-        }
+        //    return permission.Assert(new Policy<TUser, TResource, TData>.AssertionContext(user, Data, serviceProvider));
+        //}
 
-        public AssertionResult Assert<TState>(Func<T, Policy<TUser, TResource, TData>.Permission<TState>> select, TState state)
-        {
-            var permission = select(Policy);
-            return permission.Assert(new Policy<TUser, TResource, TData>.AssertionContext<TState>(user, Data, state, serviceProvider));
-        }
+        //public AssertionResult Assert<TState>(Func<T, Policy<TUser, TResource, TData>.Permission<TState>> select, TState state)
+        //{
+        //    var permission = select(Policy);
+        //    return permission.Assert(new Policy<TUser, TResource, TData>.AssertionContext<TState>(user, Data, state, serviceProvider));
+        //}
 
         public AssertionResult Assert(Func<T, IPermission> select)
         {

@@ -29,6 +29,8 @@ namespace FluentAuthorization
         }
 
         public bool Allow { get; }
+        public bool Deny => !Allow;
+
         public IEnumerable<string> Reasons { get; }
 
         public static bool operator true(AssertionResult result)
@@ -59,6 +61,12 @@ namespace FluentAuthorization
         public static implicit operator bool(AssertionResult assertionResult)
         {
             return assertionResult.Allow;
+        }
+
+        public void ThowOnDeny()
+        {
+            if (Deny)
+                throw new PolicyAssertionException(this);
         }
     }
 }

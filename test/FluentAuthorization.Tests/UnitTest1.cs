@@ -23,13 +23,15 @@ namespace FluentAuthorization.Tests
             var customers = await customerRepo.GetAsync();
             Assert.True(customers.Count == 1);
 
-            await Assert.ThrowsAsync<PolicyAssertionException>(() => customerRepo.GetByIdAsync(1));
+            var c = await customerRepo.GetByIdAsync(1);
+
+            Assert.True(c.Id == 1);
+
+            await Assert.ThrowsAsync<PolicyAssertionException>(() => customerRepo.GetByIdAsync(2));
             await Assert.ThrowsAsync<PolicyAssertionException>(() => customerRepo.GetByIdAsync(3));
-            var c2 = await customerRepo.GetByIdAsync(2);
+            
 
-            Assert.True(c2.Id == 2);
-
-            await Assert.ThrowsAsync<PolicyAssertionException>(() => customerRepo.UpdateAsync(c2));
+            await Assert.ThrowsAsync<PolicyAssertionException>(() => customerRepo.UpdateAsync(c));
         }
     }
 }

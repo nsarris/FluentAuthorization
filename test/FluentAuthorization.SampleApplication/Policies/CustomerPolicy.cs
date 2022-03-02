@@ -50,44 +50,41 @@ namespace SampleApplication.Authorization.Policies
                 .Build()
                 ;
 
-            this
-                .For(x => x.Create)
+            Create = policyBuilder
                 .AssertWith(ctx => ctx.Data.Create)
-                //.Build()
+                .Build()
                 ;
 
-            this
-                .For(x => x.Update)
+            Update = policyBuilder
                 .AssertWith(ctx => ctx.Data.Update)
+                .Build()
                 ;
 
-            this
-                .For(x => x.Delete)
+            Delete = policyBuilder
                 .AssertWith(ctx => ctx.Data.Delete)
+                .Build() 
                 ;
 
-
-            this
-                .For(x => x.ViewCustomer)
-                .AssertWith(ctx =>
+            ViewCustomer = policyBuilder
+                .AssertWith<Customer>(ctx =>
                         ctx.User.Roles.Any(x => x == RolesEnum.GeneralManager) ||
                             (ctx.Data.View &&
                             (ctx.Data.ViewPersonnel || !ctx.State.IsPersonnel) &&
                             (ctx.Data.ViewVip || !ctx.State.IsVip) &&
                             ctx.State.Accounts.Sum(x => x.Balance) <= ctx.Data.ViewBalanceLimit)
                 )
+                .Build()
                 ;
 
-            this
-                .For(x => x.ViewCustomer)
-                .AssertWith(ctx =>
+            ViewRealName = policyBuilder
+                .AssertWith<Customer>(ctx =>
                         ctx.User.Roles.Any(x => x == RolesEnum.GeneralManager) ||
                             (!ctx.State.IsVip &&
                             ctx.State.Accounts.Sum(x => x.Balance) <= ctx.Data.ViewBalanceLimit)
                 )
                 //.WithMessageBuilder((p, u, c) =>
                 //    $"Cannot view real name of VIP customer {c.Id}")
-                //.BuildAndSet()
+                .Build()
                 ;
         }
     }

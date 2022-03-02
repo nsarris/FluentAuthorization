@@ -87,13 +87,18 @@ namespace FluentAuthorization
 
             public PolicyBuilder AssertWith(Func<AssertionContext, bool> assert)
             {
-                this.assert = (AssertionContext ctx) => new  AssertionResult(assert(ctx));
+                this.assert = ctx => new  AssertionResult(assert(ctx));
                 return this;
             }
 
             public PolicyBuilder<TState> AssertWith<TState>(Func<AssertionContext<TState>, AssertionResult> assert)
             {
                 return new PolicyBuilder<TState>(assert);
+            }
+
+            public PolicyBuilder<TState> AssertWith<TState>(Func<AssertionContext<TState>, bool> assert)
+            {
+                return new PolicyBuilder<TState>(ctx => new AssertionResult(assert(ctx)));
             }
 
             public Permission Build()

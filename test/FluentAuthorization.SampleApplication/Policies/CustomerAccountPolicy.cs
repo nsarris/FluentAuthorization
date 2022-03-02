@@ -12,16 +12,20 @@ namespace SampleApplication.Authorization
     {
         public class CustomerAccountPolicyData 
         {
-            public bool View { get; private set; }
-            public bool Add { get; private set; }
-            public bool Update { get; private set; }
-            public bool Remove { get; private set; }
-            public decimal ViewBalanceLimit { get; private set; }
-            
             public CustomerAccountPolicyData(bool view, bool add, bool update, bool remove, decimal viewBalanceLimit)
             {
-
+                View = view;
+                Add = add;
+                Update = update;
+                Remove = remove;
+                ViewBalanceLimit = viewBalanceLimit;
             }
+
+            public bool View { get; }
+            public bool Add { get; }
+            public bool Update { get; }
+            public bool Remove { get; }
+            public decimal ViewBalanceLimit { get; }
         }
 
         public Permission View { get; private set; }
@@ -30,35 +34,35 @@ namespace SampleApplication.Authorization
         public Permission Remove { get; private set; }
         public Permission<Account> ViewAccount { get; private set; }
 
-        public CustomerAccountPolicy(CustomerAccountPolicyData data) 
+        public CustomerAccountPolicy() 
         {
-            this
-                .For(x => x.View)
+            View = policyBuilder
                 .AssertWith(ctx => ctx.Data.View)
+                .Build()
                 ;
 
-            this
-                .For(x => x.Add)
+            Add = policyBuilder
                 .AssertWith(ctx => ctx.Data.Add)
+                .Build()
                 ;
 
-            this
-                .For(x => x.Update)
+            Update = policyBuilder
                 .AssertWith(ctx => ctx.Data.Update)
+                .Build()
                 ;
 
-            this
-                .For(x => x.Remove)
+            Remove = policyBuilder
                 .AssertWith(ctx => ctx.Data.Remove)
+                .Build();
                 ;
 
-            this
-                .For(x => x.ViewAccount)
-                .AssertWith(ctx =>
+            ViewAccount = policyBuilder
+                .AssertWith<Account>(ctx =>
                         ctx.User.Roles.Any(x => x == RolesEnum.GeneralManager) ||
                             (ctx.Data.View &&
                             ctx.State.Balance <= ctx.Data.ViewBalanceLimit)
                             )
+                .Build()
                 ;
         }
     }

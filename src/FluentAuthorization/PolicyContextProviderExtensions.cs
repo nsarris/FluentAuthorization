@@ -28,11 +28,6 @@ namespace FluentAuthorization
             return typedProvider.GetDataAsync();
         }
 
-        public static TData GetData<TData>(this IPolicyContext<IPolicyWithData<TData>> context)
-        {
-            var typedContext = (IPolicyContextDataInternal<TData>)context;
-
-            return typedContext.Data;
-        }
+        
     }
 }
