@@ -2,15 +2,17 @@ using SampleApplication.Authorization;
 using SampleApplication.Authorization.Repositories;
 using System.Threading.Tasks;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
+using SampleApplication.Authorization.Policies;
 
 namespace FluentAuthorization.Tests
 {
-    [Collection(nameof(TestFixture))]
-    public class UnitTest1 : IClassFixture<TestFixture>
+    [Collection(nameof(DependencyInjectionTestFixture))]
+    public class UnitTest2 : IClassFixture<DependencyInjectionTestFixture>
     {
-        private readonly TestFixture fixture;
+        private readonly DependencyInjectionTestFixture fixture;
 
-        public UnitTest1(TestFixture fixture)
+        public UnitTest2(DependencyInjectionTestFixture fixture)
         {
             this.fixture = fixture;
         }
@@ -18,7 +20,12 @@ namespace FluentAuthorization.Tests
         [Fact]
         public async Task Test1()
         {
-            var customerRepo = new CustomerRepository(fixture.PolicyContextProvider);
+            var serviceProvider = fixture.BuildServiceProvider(services =>
+            {
+                services.AddTransient<CustomerRepository>();
+            });
+
+            var customerRepo = serviceProvider.GetRequiredService<CustomerRepository>();
 
             var customers = await customerRepo.GetAsync();
             Assert.True(customers.Count == 1);

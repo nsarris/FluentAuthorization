@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-
+	<LangVersion>10</LangVersion>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -21,8 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\FluentAuthorization.DependencyInjection\FluentAuthorization.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\src\FluentAuthorization\FluentAuthorization.csproj" />
     <ProjectReference Include="..\FluentAuthorization.SampleApplication\FluentAuthorization.SampleApplication.csproj" />
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
   </ItemGroup>
 
 </Project>

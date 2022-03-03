@@ -6,10 +6,8 @@ namespace FluentAuthorization
     public class PolicyContextProvider<TUser> : IPolicyContextProvider<TUser>
     {
         private readonly IUserContextProvider<TUser> userContextProvider;
-        private readonly IPolicyProvider policyProvider;
         private readonly IPolicyDataProvider<TUser> dataProvider;
-        private readonly IServiceProvider serviceProvider;
-
+        
         class StaticUserProvider : IUserContextProvider<TUser>
         {
             private readonly TUser user;
@@ -26,14 +24,10 @@ namespace FluentAuthorization
 
         public PolicyContextProvider(
             IUserContextProvider<TUser> userContextProvider,
-            IPolicyProvider policyProvider,
-            IPolicyDataProvider<TUser> dataProvider,
-            IServiceProvider serviceProvider = null)
+            IPolicyDataProvider<TUser> dataProvider)
         {
             this.userContextProvider = userContextProvider;
-            this.policyProvider = policyProvider;
             this.dataProvider = dataProvider;
-            this.serviceProvider = serviceProvider;
         }
 
         public IPolicyContextProvider<TUser> ForUser(TUser user)
@@ -42,16 +36,18 @@ namespace FluentAuthorization
 
             return new PolicyContextProvider<TUser>(
                 new StaticUserProvider(user),
-                policyProvider,
-                dataProvider,
-                serviceProvider);
+                dataProvider
+                );
         }
 
         public IPolicyContextBuilder<TResource> ForResource<TResource>(TResource resource)
         {
             if (resource is null) throw new ArgumentNullException(nameof(resource));
 
-            return new PolicyContextBuilder<TUser, TResource>(resource, userContextProvider, policyProvider, dataProvider, serviceProvider);
+            return new PolicyContextBuilder<TUser, TResource>(
+                resource, 
+                userContextProvider, 
+                dataProvider);
         }
     }
 }

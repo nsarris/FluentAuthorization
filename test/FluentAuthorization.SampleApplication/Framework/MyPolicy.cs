@@ -31,10 +31,8 @@ namespace SampleApplication.Authorization
     {
         public PolicyContextProvider(
             IUserContextProvider<MyUserSecurityContext> userContextProvider, 
-            IPolicyProvider policyProvider, 
-            IPolicyDataProvider<MyUserSecurityContext> dataProvider, 
-            IServiceProvider serviceProvider = null) 
-            : base(userContextProvider, policyProvider, dataProvider, serviceProvider)
+            IPolicyDataProvider<MyUserSecurityContext> dataProvider) 
+            : base(userContextProvider, dataProvider)
         {
         }
     }

@@ -6,16 +6,13 @@ namespace FluentAuthorization
         where T : Policy<TUser, TResource, TData>
     {
         private readonly TUser user;
-        private readonly IServiceProvider serviceProvider;
-
+        
         public PolicyContext(
             T policy,
             TUser user,
-            TData data,
-            IServiceProvider serviceProvider = null)
+            TData data)
         {
             Data = data;
-            this.serviceProvider = serviceProvider;
             Policy = policy;
             this.user = user;
         }

@@ -48,14 +48,12 @@ namespace FluentAuthorization
 
         public class AssertionContext
         {
-            public AssertionContext(TUser user, T data, IServiceProvider serviceProvider = null)
+            public AssertionContext(TUser user, T data)
             {
-                ServiceProvider = serviceProvider;
                 Data = data;
                 User = user;
             }
 
-            public IServiceProvider ServiceProvider { get; }
             public TUser User { get; set; }
             public TResource Resource { get; }
             public T Data { get; }
@@ -66,8 +64,8 @@ namespace FluentAuthorization
 
         public class AssertionContext<TState> : AssertionContext
         {
-            public AssertionContext(TUser user, T data, TState state, IServiceProvider serviceProvider = null)
-                : base(user, data, serviceProvider)
+            public AssertionContext(TUser user, T data, TState state)
+                : base(user, data)
             {
                 State = state;
             }
