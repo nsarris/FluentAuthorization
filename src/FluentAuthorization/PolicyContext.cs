@@ -10,15 +10,18 @@ namespace FluentAuthorization
         public PolicyContext(
             T policy,
             TUser user,
+            TResource resource,
             TData data)
         {
             Data = data;
+            Resource = resource;
             Policy = policy;
             this.user = user;
         }
 
         public TData Data { get; }
         public T Policy { get; }
+        public TResource Resource { get; }
 
         //TData IPolicyContextDataInternal<TData>.Data => Data;
 
@@ -41,7 +44,7 @@ namespace FluentAuthorization
 
             var typedPermission = (Policy<TUser, TResource, TData>.Permission)permission;
 
-            return typedPermission.Assert(new Policy<TUser, TResource, TData>.AssertionContext(user, Data));
+            return typedPermission.Assert(new Policy<TUser, TResource, TData>.AssertionContext(user, Resource, Data, typedPermission, Policy.Name));
         }
 
         public AssertionResult Assert<TState>(Func<T, IPermission<TState>> select, TState state)
@@ -50,7 +53,7 @@ namespace FluentAuthorization
 
             var typedPermission = (Policy<TUser, TResource, TData>.Permission<TState>)permission;
 
-            return typedPermission.Assert(new Policy<TUser, TResource, TData>.AssertionContext<TState>(user, Data, state));
+            return typedPermission.Assert(new Policy<TUser, TResource, TData>.AssertionContext<TState>(user, Resource, Data, state, typedPermission, Policy.Name));
         }
     }
 }

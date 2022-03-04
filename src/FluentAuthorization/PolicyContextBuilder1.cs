@@ -36,7 +36,7 @@ namespace FluentAuthorization
             var user = await GetUserAsync().ConfigureAwait(false);
             var data = await GetDataAsync().ConfigureAwait(false);
             
-            return new PolicyContext<T, TUser, TResource, TData>(Policy, user, data);
+            return new PolicyContext<T, TUser, TResource, TData>(Policy, user, Resource, data);
         }
 
         private Task<TUser> GetUserAsync()

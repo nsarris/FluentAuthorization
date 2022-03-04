@@ -14,13 +14,13 @@ namespace FluentAuthorization
         public static void ThrowOnDeny<T>(this IPolicyContext<T> policy, Func<T, IPermission> select)
             where T : IPolicy
         {
-            policy.Assert(select).ThowOnDeny();
+            policy.Assert(select).ThrowOnDeny();
         }
 
         public static void ThrowOnDeny<T, TState>(this IPolicyContext<T> policy, Func<T, IPermission<TState>> select, TState state)
             where T : IPolicy
         {
-            policy.Assert(select, state).ThowOnDeny();
+            policy.Assert(select, state).ThrowOnDeny();
         }
     }
 }

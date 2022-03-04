@@ -63,7 +63,7 @@ namespace FluentAuthorization
             return assertionResult.Allow;
         }
 
-        public void ThowOnDeny()
+        public void ThrowOnDeny()
         {
             if (Deny)
                 throw new PolicyAssertionException(this);

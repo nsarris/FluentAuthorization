@@ -47,6 +47,7 @@ namespace SampleApplication.Authorization.Policies
         {
             View = policyBuilder
                 .AssertWith(ctx => ctx.Data.View)
+                .WithName(nameof(View))
                 .Build()
                 ;
 
@@ -82,8 +83,8 @@ namespace SampleApplication.Authorization.Policies
                             (!ctx.State.IsVip &&
                             ctx.State.Accounts.Sum(x => x.Balance) <= ctx.Data.ViewBalanceLimit)
                 )
-                //.WithMessageBuilder((p, u, c) =>
-                //    $"Cannot view real name of VIP customer {c.Id}")
+                .WithMessageBuilder((ctx, reason) =>
+                    $"Cannot view real name of VIP customer {ctx.State.Id}.")
                 .Build()
                 ;
         }

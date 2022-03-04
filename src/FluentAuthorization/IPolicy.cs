@@ -5,6 +5,7 @@ namespace FluentAuthorization
     public interface IPolicy
     {
         string Key { get; }
+        string Name { get; }
         Type DataType { get; }
         Type UserType { get; }
         Type ResourceType { get; }
