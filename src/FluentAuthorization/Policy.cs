@@ -2,7 +2,7 @@
 
 namespace FluentAuthorization
 {
-    public abstract class Policy<TUser, TResource, T> : IPolicy<TResource, T>
+    public abstract class Policy<TUser, TResource, T> : IPolicy<TUser, TResource, T>
     {
         Type IPolicy.ResourceType => typeof(TResource);
         Type IPolicy.DataType => typeof(T);

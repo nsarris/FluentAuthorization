@@ -11,7 +11,7 @@ namespace SampleApplication.Authorization.Repositories
 {
     public class CustomerRepository
     {
-        private List<Customer> customers = Customers.Get();
+        private readonly List<Customer> customers = Customers.Get();
 
         private readonly IPolicyContextProvider<MyUserSecurityContext> policyContextProvider;
 
@@ -22,7 +22,7 @@ namespace SampleApplication.Authorization.Repositories
 
         private Task<IPolicyContext<CustomerPolicy>> GetSecurityContext()
             => policyContextProvider
-                //.ForUser(null)
+                //.ForUser(user)
                 .ForResource(EntityTypeResource.Customer)
                 .ForPolicy<CustomerPolicy>()
                 .BuildContextAsync();

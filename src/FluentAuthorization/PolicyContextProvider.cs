@@ -40,7 +40,7 @@ namespace FluentAuthorization
                 );
         }
 
-        public IPolicyContextBuilder<TResource> ForResource<TResource>(TResource resource)
+        public IPolicyContextBuilder<TUser, TResource> ForResource<TResource>(TResource resource)
         {
             if (resource is null) throw new ArgumentNullException(nameof(resource));
 

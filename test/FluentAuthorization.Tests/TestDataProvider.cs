@@ -10,7 +10,7 @@ namespace FluentAuthorization.Tests
     class TestDataProvider : IPolicyDataProvider<MyUserSecurityContext>
     {
         public Task<IEnumerable<TData>> GetDataAsync<TPolicy, TResource, TData>(MyUserSecurityContext user, TPolicy policy, TResource resource)
-            where TPolicy : IPolicy<TResource, TData>
+            where TPolicy : IPolicy<MyUserSecurityContext, TResource, TData>
         {
             return Task.FromResult(policy switch
             {

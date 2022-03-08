@@ -9,7 +9,7 @@ namespace SampleApplication.Authorization
 
     public class PolicyRepository : IPolicyDataProvider<MyUserSecurityContext>
     {
-        public Task<IEnumerable<TData>> GetDataAsync<TPolicy, TResource, TData>(MyUserSecurityContext user, TPolicy policy, TResource resource) where TPolicy : IPolicy<TResource, TData>
+        public Task<IEnumerable<TData>> GetDataAsync<TPolicy, TResource, TData>(MyUserSecurityContext user, TPolicy policy, TResource resource) where TPolicy : IPolicy<MyUserSecurityContext, TResource, TData>
         {
             throw new NotImplementedException();
         }

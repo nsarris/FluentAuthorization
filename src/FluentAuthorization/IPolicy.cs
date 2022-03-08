@@ -11,7 +11,12 @@ namespace FluentAuthorization
         Type ResourceType { get; }
     }
 
-    public interface IPolicyWithResource<in T> : IPolicy
+    public interface IPolicy<TUser> : IPolicy
+    {
+
+    }
+
+    public interface IPolicyWithResource<TUser, in T> : IPolicy
     {
 
     }
@@ -21,7 +26,12 @@ namespace FluentAuthorization
 
     }
 
-    public interface IPolicy<TResource, TData> : IPolicyWithData<TData>, IPolicyWithResource<TResource>
+    public interface IPolicyWithData<TUser, in T> : IPolicyWithData<T>, IPolicy<TUser>
+    {
+
+    }
+
+    public interface IPolicy<TUser, TResource, TData> : IPolicyWithData<TUser, TData>, IPolicyWithResource<TUser, TResource>
     {
 
     }

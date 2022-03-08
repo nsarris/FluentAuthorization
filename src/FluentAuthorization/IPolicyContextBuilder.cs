@@ -1,7 +1,7 @@
 ﻿namespace FluentAuthorization
 {
-    public interface IPolicyContextBuilder<TResource>
+    public interface IPolicyContextBuilder<TUser, TResource>
     {
-        IPolicyContextBuilder<T, TResource> ForPolicy<T>() where T : class, IPolicyWithResource<TResource>, new();
+        IPolicyContextBuilder<TUser, T, TResource> ForPolicy<T>() where T : class, IPolicyWithResource<TUser, TResource>, new();
     }
 }

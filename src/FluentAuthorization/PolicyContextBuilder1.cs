@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 namespace FluentAuthorization
 {
     internal class PolicyContextBuilder<T, TUser, TResource, TData> :
-            IPolicyContextBuilder<T, TResource>,
-            IPolicyContextProviderInternal<T, TResource>,
+            IPolicyContextBuilder<TUser, T, TResource>,
+            IPolicyContextProviderInternal<TUser, T, TResource>,
+            IPolicyContextProviderInternal<TUser, T, TResource, TData>,
             IPolicyContextDataProviderInternal<TData>,
             IPolicyContextDataProviderInternal
         where T : Policy<TUser, TResource, TData>
@@ -31,11 +32,30 @@ namespace FluentAuthorization
             data = new AsyncLazy<IEnumerable<TData>>(async () => await dataProvider.GetDataAsync<T, TResource, TData>(await GetUserAsync().ConfigureAwait(false), Policy, Resource));
         }
 
-        async Task<IPolicyContext<T>> IPolicyContextProviderInternal<T, TResource>.BuildAsync()
+        async Task<IPolicyContext<T>> IPolicyContextProviderInternal<TUser, T, TResource>.BuildAsync()
         {
-            var user = await GetUserAsync().ConfigureAwait(false);
-            var data = await GetDataAsync().ConfigureAwait(false);
+            var contextUser = await GetUserAsync().ConfigureAwait(false);
+            var contextData = await GetDataAsync().ConfigureAwait(false);
             
+            return new PolicyContext<T, TUser, TResource, TData>(Policy, contextUser, Resource, contextData);
+        }
+
+        async Task<IPolicyContext<T>> IPolicyContextProviderInternal<TUser, T, TResource>.BuildAsync(TUser user)
+        {
+            var contextData = await GetDataAsync().ConfigureAwait(false);
+
+            return new PolicyContext<T, TUser, TResource, TData>(Policy, user, Resource, contextData);
+        }
+
+        async Task<IPolicyContext<T>> IPolicyContextProviderInternal<TUser, T, TResource, TData>.BuildAsync(TData data)
+        {
+            var contextUser = await GetUserAsync().ConfigureAwait(false);
+            
+            return new PolicyContext<T, TUser, TResource, TData>(Policy, contextUser, Resource, data);
+        }
+
+        IPolicyContext<T> IPolicyContextProviderInternal<TUser, T, TResource, TData>.Build(TUser user, TData data)
+        {
             return new PolicyContext<T, TUser, TResource, TData>(Policy, user, Resource, data);
         }
 
