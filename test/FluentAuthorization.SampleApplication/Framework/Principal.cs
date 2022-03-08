@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace SampleApplication.Authorization
 {
 
-    public class MyUser
+    public class Principal
     {
         public string UserId { get; }
 
@@ -12,7 +12,7 @@ namespace SampleApplication.Authorization
 
         public IEnumerable<RolesEnum> Roles { get; }
 
-        public MyUser(string username, IEnumerable<string> groups, IEnumerable<RolesEnum> roles)
+        public Principal(string username, IEnumerable<string> groups, IEnumerable<RolesEnum> roles)
         {
             UserId = username;
             GroupIds = groups;

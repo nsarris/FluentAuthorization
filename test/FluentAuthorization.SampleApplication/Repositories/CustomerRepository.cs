@@ -13,9 +13,9 @@ namespace SampleApplication.Authorization.Repositories
     {
         private readonly List<Customer> customers = Customers.Get();
 
-        private readonly IPolicyContextProvider<MyUser> policyContextProvider;
+        private readonly IPolicyContextProvider<Principal> policyContextProvider;
 
-        public CustomerRepository(IPolicyContextProvider<MyUser> policyContextProvider)
+        public CustomerRepository(IPolicyContextProvider<Principal> policyContextProvider)
         {
             this.policyContextProvider = policyContextProvider;
         }

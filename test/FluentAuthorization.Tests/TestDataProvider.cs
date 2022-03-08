@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace FluentAuthorization.Tests
 {
-    class TestDataProvider : IPolicyDataProvider<MyUser>
+    class TestDataProvider : IPolicyDataProvider<Principal>
     {
-        public Task<IEnumerable<TData>> GetDataAsync<TPolicy, TResource, TData>(MyUser user, TPolicy policy, TResource resource)
-            where TPolicy : IPolicy<MyUser, TResource, TData>
+        public Task<IEnumerable<TData>> GetDataAsync<TPolicy, TResource, TData>(Principal user, TPolicy policy, TResource resource)
+            where TPolicy : IPolicy<Principal, TResource, TData>
         {
             return Task.FromResult(policy switch
             {
