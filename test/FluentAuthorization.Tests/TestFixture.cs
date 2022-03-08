@@ -7,15 +7,15 @@ namespace FluentAuthorization.Tests
 {
     public class TestFixture
     {
-        public MyUserSecurityContext User { get; }
-        public IUserContextProvider<MyUserSecurityContext> UserContextProvider { get; }
-        public IPolicyDataProvider<MyUserSecurityContext> DataProvider { get; }
+        public MyUser User { get; }
+        public IUserContextProvider<MyUser> UserContextProvider { get; }
+        public IPolicyDataProvider<MyUser> DataProvider { get; }
         
         public IPolicyContextProvider PolicyContextProvider { get; }
 
         public TestFixture()
         {
-            User = new MyUserSecurityContext("user1", new[] { "g1", "g2" }, new RolesEnum[] { RolesEnum.Cashier });
+            User = new MyUser("user1", new[] { "g1", "g2" }, new RolesEnum[] { RolesEnum.Cashier });
             //PolicyProvider = new TestPolicyProvider();
             DataProvider = new TestDataProvider();
             UserContextProvider = new TestUserContextProvider(User);

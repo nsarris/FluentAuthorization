@@ -8,13 +8,13 @@ namespace FluentAuthorization.Tests
 {
     public class DependencyInjectionTestFixture
     {
-        public MyUserSecurityContext User { get; }
+        public MyUser User { get; }
         
         public IServiceProvider DefaultServiceProvider { get; }
         
         public DependencyInjectionTestFixture()
         {
-            User = new MyUserSecurityContext("user1", new[] { "g1", "g2" }, new RolesEnum[] { RolesEnum.Cashier });
+            User = new MyUser("user1", new[] { "g1", "g2" }, new RolesEnum[] { RolesEnum.Cashier });
 
             var services = new ServiceCollection();
 
@@ -33,7 +33,7 @@ namespace FluentAuthorization.Tests
 
         private void BuildServices(IServiceCollection services)
         {
-            services.AddFluentAuthorization<MyUserSecurityContext>(c => c
+            services.AddFluentAuthorization<MyUser>(c => c
                    .AddUserContextProvider(sp => new TestUserContextProvider(User), ServiceLifetime.Singleton)
                    .AddDataProvider<TestDataProvider>(ServiceLifetime.Transient)
 

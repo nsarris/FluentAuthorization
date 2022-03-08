@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace SampleApplication.Authorization
 {
 
-    public class PolicyRepository : IPolicyDataProvider<MyUserSecurityContext>
+    public class PolicyRepository : IPolicyDataProvider<MyUser>
     {
-        public Task<IEnumerable<TData>> GetDataAsync<TPolicy, TResource, TData>(MyUserSecurityContext user, TPolicy policy, TResource resource) where TPolicy : IPolicy<MyUserSecurityContext, TResource, TData>
+        public Task<IEnumerable<TData>> GetDataAsync<TPolicy, TResource, TData>(MyUser user, TPolicy policy, TResource resource) where TPolicy : IPolicy<MyUser, TResource, TData>
         {
             throw new NotImplementedException();
         }

@@ -3,16 +3,16 @@ using System.Threading.Tasks;
 
 namespace FluentAuthorization.Tests
 {
-    class TestUserContextProvider : IUserContextProvider<MyUserSecurityContext>
+    class TestUserContextProvider : IUserContextProvider<MyUser>
     {
-        private readonly MyUserSecurityContext user;
+        private readonly MyUser user;
 
-        public TestUserContextProvider(MyUserSecurityContext user)
+        public TestUserContextProvider(MyUser user)
         {
             this.user = user;
         }
 
-        public Task<MyUserSecurityContext> GetAsync()
+        public Task<MyUser> GetAsync()
         {
             return Task.FromResult(user);
         }
