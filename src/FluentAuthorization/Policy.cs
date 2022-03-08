@@ -2,7 +2,7 @@
 
 namespace FluentAuthorization
 {
-    public abstract class Policy<TUser, TResource, T> : IPolicy<TResource, T>, IPolicyWithResource<TResource>
+    public abstract class Policy<TUser, TResource, T> : IPolicy<TResource, T>
     {
         Type IPolicy.ResourceType => typeof(TResource);
         Type IPolicy.DataType => typeof(T);
@@ -16,7 +16,7 @@ namespace FluentAuthorization
         public abstract class Permission : IPermission
         {
             public abstract AssertionResult Assert(AssertionContext context);
-            public abstract string BuildMessage(AssertionContext context, string reason = null);
+            public abstract string BuildMessage(AssertionContext context);
             public abstract string Name { get; }
 
             public override string ToString() => Name;
@@ -25,31 +25,29 @@ namespace FluentAuthorization
         public abstract class Permission<TState> : IPermission<TState>
         {
             public abstract AssertionResult Assert(AssertionContext<TState> context);
-            public abstract string BuildMessage(AssertionContext<TState> context, string reason = null);
+            public abstract string BuildMessage(AssertionContext<TState> context);
             public abstract string Name { get; }
 
             public override string ToString() => Name;
         }
 
-        private class DefaultMessageBuilder
+        private static class DefaultMessageBuilder
         {
-            public static string BuildMessage(AssertionContextBase context, string reason)
+            public static string BuildMessage(AssertionContextBase context)
             {
-                var msg = $"User {context.User} was denied permission {context.PermissionName} of policy {context.PolicyName}.";
-                if (!string.IsNullOrEmpty(reason)) msg += Environment.NewLine + $"Reason: {reason}";
-                return msg;
+                return FluentAuthorization.DefaultMessageBuilder.BuildMessage(context.User.ToString(), context.PolicyName, context.PermissionName);
             }
         }
 
         public class DelegatePermission : Permission
         {
             private readonly Func<AssertionContext, AssertionResult> assert;
-            private readonly Func<AssertionContext, string, string> messageBuilder;
+            private readonly Func<AssertionContext, string> messageBuilder;
             
             public DelegatePermission(
                 Func<AssertionContext, AssertionResult> assert,
                 string name,
-                Func<AssertionContext, string, string> messageBuilder)
+                Func<AssertionContext, string> messageBuilder)
             {
                 this.assert = assert;
                 this.messageBuilder = messageBuilder ?? DefaultMessageBuilder.BuildMessage;
@@ -61,21 +59,21 @@ namespace FluentAuthorization
             public override AssertionResult Assert(AssertionContext context)
                 => assert(context);
 
-            public override string BuildMessage(AssertionContext context, string reason = null)
-                => messageBuilder(context, reason);
+            public override string BuildMessage(AssertionContext context)
+                => messageBuilder(context);
         }
 
         public class DelegatePermission<TState> : Permission<TState>
         {
             private readonly Func<AssertionContext<TState>, AssertionResult> assert;
-            private readonly Func<AssertionContext<TState>, string, string> messageBuilder;
+            private readonly Func<AssertionContext<TState>, string> messageBuilder;
 
             public override string Name { get; }
 
             public DelegatePermission(
                 Func<AssertionContext<TState>, AssertionResult> assert,
                 string name,
-                Func<AssertionContext<TState>, string, string> messageBuilder)
+                Func<AssertionContext<TState>, string> messageBuilder)
             {
                 this.assert = assert;
                 this.messageBuilder = messageBuilder ?? DefaultMessageBuilder.BuildMessage;
@@ -85,13 +83,13 @@ namespace FluentAuthorization
             public override AssertionResult Assert(AssertionContext<TState> context)
                 => assert(context);
 
-            public override string BuildMessage(AssertionContext<TState> context, string reason = null)
-                => messageBuilder(context, reason);
+            public override string BuildMessage(AssertionContext<TState> context)
+                => messageBuilder(context);
         }
 
         public abstract class AssertionContextBase
         {
-            internal AssertionContextBase(TUser user, TResource resource, T data, string permissionName, string policyName)
+            protected AssertionContextBase(TUser user, TResource resource, T data, string permissionName, string policyName)
             {
                 Data = data;
                 Resource = resource;
@@ -106,8 +104,8 @@ namespace FluentAuthorization
             public string PermissionName { get; }
             public string PolicyName { get; }
 
-            public AssertionResult Allow() => new(true);
-            public AssertionResult Deny(string reason) => new(false, reason);
+            public AssertionResult Allow() => AssertionResult.Success;
+            //public AssertionResult Deny(string reason = null) => new(new AssertionFailure(PermissionName, PolicyName, reason));
         }
 
         public class AssertionContext : AssertionContextBase
@@ -120,7 +118,7 @@ namespace FluentAuthorization
                 this.permission = permission;
             }
 
-            public AssertionResult Deny() => new(false, permission.BuildMessage(this));
+            public AssertionResult Deny(string reason = null) => new(new AssertionFailure(User.ToString(), PermissionName, PolicyName, permission.BuildMessage(this), reason));
         }
 
         public class AssertionContext<TState> : AssertionContextBase
@@ -135,8 +133,8 @@ namespace FluentAuthorization
             }
 
             public TState State { get; }
-            
-            public AssertionResult Deny() => new(false, permission.BuildMessage(this));
+
+            public AssertionResult Deny(string reason = null) => new(new AssertionFailure(User.ToString(), PermissionName, PolicyName, permission.BuildMessage(this), reason));
         }
 
         public class PolicyBuilderRoot
@@ -165,7 +163,7 @@ namespace FluentAuthorization
         public class PolicyBuilder
         {
             private readonly Func<AssertionContext, AssertionResult> assert;
-            private Func<AssertionContext, string, string> messageBuilder;
+            private Func<AssertionContext, string> messageBuilder;
             private string name;
 
             public PolicyBuilder(Func<AssertionContext, AssertionResult> assert)
@@ -179,7 +177,7 @@ namespace FluentAuthorization
                 return this;
             }
 
-            public PolicyBuilder WithMessageBuilder(Func<AssertionContext, string, string> messageBuilder)
+            public PolicyBuilder WithMessage(Func<AssertionContext, string> messageBuilder)
             {
                 this.messageBuilder = messageBuilder;
                 return this;
@@ -192,7 +190,7 @@ namespace FluentAuthorization
         public class PolicyBuilder<TState>
         {
             private readonly Func<AssertionContext<TState>, AssertionResult> assert;
-            private Func<AssertionContext<TState>, string, string> messageBuilder;
+            private Func<AssertionContext<TState>, string> messageBuilder;
             private string name;
 
             public PolicyBuilder(Func<AssertionContext<TState>, AssertionResult> assert)
@@ -206,7 +204,7 @@ namespace FluentAuthorization
                 return this;
             }
 
-            public PolicyBuilder<TState> WithMessageBuilder(Func<AssertionContext<TState>, string, string> messageBuilder)
+            public PolicyBuilder<TState> WithMessage(Func<AssertionContext<TState>, string> messageBuilder)
             {
                 this.messageBuilder = messageBuilder;
                 return this;
@@ -218,7 +216,7 @@ namespace FluentAuthorization
 
         protected readonly PolicyBuilderRoot policyBuilder = new();
 
-        public Policy()
+        protected Policy()
         {
 
         }

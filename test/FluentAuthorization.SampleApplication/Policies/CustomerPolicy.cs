@@ -83,7 +83,7 @@ namespace SampleApplication.Authorization.Policies
                             (!ctx.State.IsVip &&
                             ctx.State.Accounts.Sum(x => x.Balance) <= ctx.Data.ViewBalanceLimit)
                 )
-                .WithMessageBuilder((ctx, reason) =>
+                .WithMessage(ctx =>
                     $"Cannot view real name of VIP customer {ctx.State.Id}.")
                 .Build()
                 ;

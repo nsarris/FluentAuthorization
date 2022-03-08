@@ -7,7 +7,7 @@ namespace FluentAuthorization
         public AssertionResult Result { get; set; }
 
         public PolicyAssertionException(AssertionResult assertionResult)
-            :base("A security policy assertion denied access due to the following reasons: " + string.Join(",", assertionResult.Reasons))
+            :base("Security policy assertion failure: " + string.Join(Environment.NewLine, assertionResult.Failures))
         {
         }
     }
