@@ -19,8 +19,8 @@ namespace FluentAuthorization
 
         protected readonly PermissionBuilder permissionBuilder = new();
 
-        protected bool AggregateDataBeforeAssertion = false;
-        protected bool TreatUndefinedAsDeny = true;
+        protected bool AggregateDataBeforeAssertion { get; } = false;
+        protected bool TreatUndefinedAsDeny { get; } = true;
 
         private static string BuildDefaultMessage(AssertionContextBase context)
         {
