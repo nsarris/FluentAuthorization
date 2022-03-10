@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\FluentAuthorization\FluentAuthorization.csproj" />
+    <ProjectReference Include="..\FluentAuthorization\FluentAuthorization.csproj" />
   </ItemGroup>
 
 </Project>

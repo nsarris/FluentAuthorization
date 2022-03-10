@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\FluentAuthorization.DependencyInjection\FluentAuthorization.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\src\FluentAuthorization.DependencyInjection\FluentAuthorization.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\src\FluentAuthorization\FluentAuthorization.csproj" />
     <ProjectReference Include="..\FluentAuthorization.SampleApplication\FluentAuthorization.SampleApplication.csproj" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />

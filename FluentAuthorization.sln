@@ -7,16 +7,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAuthorization_old", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAuthorization", "src\FluentAuthorization\FluentAuthorization.csproj", "{024BC828-C4EA-495A-A384-7176D1714EDD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAuthorization.SampleApplication", "test\FluentAuthorization.SampleApplication\FluentAuthorization.SampleApplication.csproj", "{AA25DF02-7138-4D3C-B130-6D76FE0627AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAuthorization.SampleApplication", "test\FluentAuthorization.SampleApplication\FluentAuthorization.SampleApplication.csproj", "{AA25DF02-7138-4D3C-B130-6D76FE0627AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAuthorization.Tests", "test\FluentAuthorization.Tests\FluentAuthorization.Tests.csproj", "{F838E097-D26B-4288-84E6-0A717119F2D2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAuthorization.DependencyInjection", "FluentAuthorization.DependencyInjection\FluentAuthorization.DependencyInjection.csproj", "{327D814E-5A67-47C0-8A4A-E07EAF444B5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAuthorization.Tests", "test\FluentAuthorization.Tests\FluentAuthorization.Tests.csproj", "{F838E097-D26B-4288-84E6-0A717119F2D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{0CB26E76-7141-43D5-9798-03B194D34B3D}"
 	ProjectSection(SolutionItems) = preProject
 		TODO.txt = TODO.txt
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAuthorization.DependencyInjection", "src\FluentAuthorization.DependencyInjection\FluentAuthorization.DependencyInjection.csproj", "{81FC57C7-FFC9-443D-91F2-D9E5A30081C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,10 +40,10 @@ Global
 		{F838E097-D26B-4288-84E6-0A717119F2D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F838E097-D26B-4288-84E6-0A717119F2D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F838E097-D26B-4288-84E6-0A717119F2D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{327D814E-5A67-47C0-8A4A-E07EAF444B5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{327D814E-5A67-47C0-8A4A-E07EAF444B5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{327D814E-5A67-47C0-8A4A-E07EAF444B5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{327D814E-5A67-47C0-8A4A-E07EAF444B5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81FC57C7-FFC9-443D-91F2-D9E5A30081C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81FC57C7-FFC9-443D-91F2-D9E5A30081C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81FC57C7-FFC9-443D-91F2-D9E5A30081C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81FC57C7-FFC9-443D-91F2-D9E5A30081C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
