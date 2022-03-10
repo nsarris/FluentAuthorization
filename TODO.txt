@@ -1,4 +1,4 @@
-1. Permission Name
+1. Permission Name (user expression/reflection)
 2. Permission Message
 3. Custom data on assertion
 4. Rename UserContext -> Principal

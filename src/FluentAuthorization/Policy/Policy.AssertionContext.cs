@@ -4,9 +4,9 @@
     {
         public class AssertionContext : AssertionContextBase
         {
-            private readonly Permission permission;
+            private readonly IPermission permission;
 
-            internal AssertionContext(TUser user, TResource resource, T data, Permission permission, string policyName) 
+            internal AssertionContext(TUser user, TResource resource, T data, IPermission permission, string policyName) 
                 : base(user, resource, data, permission.Name, policyName)
             {
                 this.permission = permission;

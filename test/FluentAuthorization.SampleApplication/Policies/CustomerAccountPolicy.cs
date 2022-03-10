@@ -36,27 +36,27 @@ namespace SampleApplication.Authorization
 
         public CustomerAccountPolicy() 
         {
-            View = policyBuilder
+            View = permissionBuilder
                 .AssertWith(ctx => ctx.Data.View)
                 .Build()
                 ;
 
-            Add = policyBuilder
+            Add = permissionBuilder
                 .AssertWith(ctx => ctx.Data.Add)
                 .Build()
                 ;
 
-            Update = policyBuilder
+            Update = permissionBuilder
                 .AssertWith(ctx => ctx.Data.Update)
                 .Build()
                 ;
 
-            Remove = policyBuilder
+            Remove = permissionBuilder
                 .AssertWith(ctx => ctx.Data.Remove)
                 .Build();
                 ;
 
-            ViewAccount = policyBuilder
+            ViewAccount = permissionBuilder
                 .AssertWith<Account>(ctx =>
                         ctx.User.Roles.Any(x => x == RolesEnum.GeneralManager) ||
                             (ctx.Data.View &&

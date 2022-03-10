@@ -56,32 +56,15 @@ namespace SampleApplication.Authorization.Repositories
             customers.Add(customer);
         }
 
-        //private Customer ApplySecurityFilter(Customer customer)
-        //{
-        //    var policyContext = await policyContextProvider
-        //        .ForResource(EntityTypeResource.Customer)
-        //        .ForPolicy<CustomerPolicy>()
-        //        .BuildContextAsync();
-
-
-        //    if (
-        //        //.Assert((CustomerPolicy x) => x.ViewRealName, customer).Deny)
-        //        customer.Name = "Name obfuscated";
-
-        //    return customer;
-        //}
-
         public async Task<Customer> GetByIdAsync(int id)
         {
             var policyContext = await GetSecurityContext();
 
             policyContext.ThrowOnDeny(x => x.View);
 
-            var customer = customers.Where(x => x.Id == id).FirstOrDefault();
+            var customer = customers.FirstOrDefault(x => x.Id == id);
 
             policyContext.ThrowOnDeny(x => x.ViewCustomer, customer);
-
-            //ApplySecurityFilter(customer);
 
             if (!policyContext.Assert(x => x.ViewRealName, customer))
                 customer.Name = "Name obfuscated";
@@ -91,15 +74,6 @@ namespace SampleApplication.Authorization.Repositories
 
         public async Task<List<Customer>> GetAsync()
         {
-            //policyContextProvider.WhenAll(a => a.Has<CustomerPolicy>(x => x.View)).ThowOnDeny();
-
-            //return customers
-            //    .Where(customer =>
-            //            policyContextProvider
-            //            .Assert((CustomerPolicy x) => x.ViewCustomer, customer).Allow)
-            //    .Select(ApplySecurityFilter)
-            //    .ToList();
-
             var policyContext = await GetSecurityContext();
 
             return customers

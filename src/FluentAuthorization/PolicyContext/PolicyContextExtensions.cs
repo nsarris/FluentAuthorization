@@ -12,6 +12,13 @@ namespace FluentAuthorization
             return typedContext.Data;
         }
 
+        public static TData GetAggregatedData<TData>(this IPolicyContext<IPolicyWithData<TData>> context)
+        {
+            var typedContext = (IDataContainer<TData>)context;
+
+            return context.Policy.Aggregate(typedContext.Data);
+        }
+
         public static void ThrowOnDeny<T>(this IPolicyContext<T> policy, Func<T, IPermission> select)
             where T : IPolicy
         {

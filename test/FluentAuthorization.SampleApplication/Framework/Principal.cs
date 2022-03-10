@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace SampleApplication.Authorization
 {
-
     public class Principal
     {
         public string UserId { get; }

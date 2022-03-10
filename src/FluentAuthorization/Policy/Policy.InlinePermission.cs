@@ -21,10 +21,10 @@ namespace FluentAuthorization
 
             public override string Name { get; }
 
-            public override AssertionResult Assert(AssertionContext context)
+            protected override AssertionResult Assert(AssertionContext context)
                 => assert(context);
 
-            public override string BuildMessage(AssertionContext context)
+            protected override string BuildMessage(AssertionContext context)
                 => messageBuilder(context);
         }
     }

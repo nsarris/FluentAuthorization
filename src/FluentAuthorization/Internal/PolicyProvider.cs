@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace FluentAuthorization
 {
-    internal static class PolicyProvider //: IPolicyProvider
+    internal static class PolicyProvider
     {
         private static readonly ConcurrentDictionary<Type, IPolicy> cache = new();
 

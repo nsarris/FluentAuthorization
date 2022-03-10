@@ -45,28 +45,28 @@ namespace SampleApplication.Authorization.Policies
 
         public CustomerPolicy() 
         {
-            View = policyBuilder
+            View = permissionBuilder
                 .AssertWith(ctx => ctx.Data.View)
                 .WithName(nameof(View))
                 .Build()
                 ;
 
-            Create = policyBuilder
+            Create = permissionBuilder
                 .AssertWith(ctx => ctx.Data.Create)
                 .Build()
                 ;
 
-            Update = policyBuilder
+            Update = permissionBuilder
                 .AssertWith(ctx => ctx.Data.Update)
                 .Build()
                 ;
 
-            Delete = policyBuilder
+            Delete = permissionBuilder
                 .AssertWith(ctx => ctx.Data.Delete)
                 .Build() 
                 ;
 
-            ViewCustomer = policyBuilder
+            ViewCustomer = permissionBuilder
                 .AssertWith<Customer>(ctx =>
                         ctx.User.Roles.Any(x => x == RolesEnum.GeneralManager) ||
                             (ctx.Data.View &&
@@ -77,7 +77,7 @@ namespace SampleApplication.Authorization.Policies
                 .Build()
                 ;
 
-            ViewRealName = policyBuilder
+            ViewRealName = permissionBuilder
                 .AssertWith<Customer>(ctx =>
                         ctx.User.Roles.Any(x => x == RolesEnum.GeneralManager) ||
                             (!ctx.State.IsVip &&

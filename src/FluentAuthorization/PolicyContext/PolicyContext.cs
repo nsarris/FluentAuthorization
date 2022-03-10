@@ -25,29 +25,18 @@ namespace FluentAuthorization
         public T Policy { get; }
         public TResource Resource { get; }
 
-
         public AssertionResult Assert(Func<T, IPermission> select)
         {
             var permission = select(Policy);
-
             var typedPermission = (Policy<TUser, TResource, TData>.Permission)permission;
-
-            //TODO: Aggregate results
-            var data = Policy.Aggregate(Data);
-
-            return typedPermission.Assert(new Policy<TUser, TResource, TData>.AssertionContext(user, Resource, data, typedPermission, Policy.Name));
+            return Policy.Assert(user, Resource, typedPermission, Data);
         }
 
         public AssertionResult Assert<TState>(Func<T, IPermission<TState>> select, TState state)
         {
             var permission = select(Policy);
-
             var typedPermission = (Policy<TUser, TResource, TData>.Permission<TState>)permission;
-
-            //TODO: Aggregate results
-            var data = Policy.Aggregate(Data);
-
-            return typedPermission.Assert(new Policy<TUser, TResource, TData>.AssertionContext<TState>(user, Resource, data, state, typedPermission, Policy.Name));
+            return Policy.Assert(user, Resource, typedPermission, Data, state);
         }
     }
 }

@@ -74,32 +74,41 @@ namespace FluentAuthorization
 
         public static bool operator true(AssertionResult result)
         {
-            return result.Allow;
+            return result?.Allow ?? true;
         }
 
         public static bool operator false(AssertionResult result)
         {
-            return !result.Allow;
+            return result?.Deny ?? false;
         }
 
         public static bool operator !(AssertionResult result)
         {
-            return !result.Allow;
+            return result?.Deny ?? false;
         }
 
         public static AssertionResult operator &(AssertionResult left, AssertionResult right)
         {
+            if (left is null) return right;
+            if (right is null) return left;
             return new AssertionResult(left.Allow && right.Allow, left.Failures.Concat(right.Failures));
         }
 
         public static AssertionResult operator |(AssertionResult left, AssertionResult right)
         {
+            if (left is null) return right;
+            if (right is null) return left;
             return new AssertionResult(left.Allow || right.Allow, left.Failures.Concat(right.Failures));
         }
 
-        public static implicit operator bool(AssertionResult assertionResult)
+        public static implicit operator bool(AssertionResult assertionresult)
         {
-            return assertionResult.Allow;
+            return assertionresult is null || assertionresult.Allow;
+        }
+
+        public static implicit operator bool?(AssertionResult assertionresult)
+        {
+            return assertionresult?.Allow;
         }
 
         public override string ToString()

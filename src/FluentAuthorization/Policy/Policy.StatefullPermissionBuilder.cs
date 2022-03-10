@@ -4,24 +4,24 @@ namespace FluentAuthorization
 {
     public abstract partial class Policy<TUser, TResource, T>
     {
-        public class PolicyBuilder<TState>
+        public class StatefullPermissionBuilder<TState>
         {
             private readonly Func<AssertionContext<TState>, AssertionResult> assert;
             private Func<AssertionContext<TState>, string> messageBuilder;
             private string name;
 
-            public PolicyBuilder(Func<AssertionContext<TState>, AssertionResult> assert)
+            public StatefullPermissionBuilder(Func<AssertionContext<TState>, AssertionResult> assert)
             {
                 this.assert = assert;
             }
 
-            public PolicyBuilder<TState> WithName(string name)
+            public StatefullPermissionBuilder<TState> WithName(string name)
             {
                 this.name = name;
                 return this;
             }
 
-            public PolicyBuilder<TState> WithMessage(Func<AssertionContext<TState>, string> messageBuilder)
+            public StatefullPermissionBuilder<TState> WithMessage(Func<AssertionContext<TState>, string> messageBuilder)
             {
                 this.messageBuilder = messageBuilder;
                 return this;

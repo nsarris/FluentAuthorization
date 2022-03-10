@@ -21,10 +21,10 @@ namespace FluentAuthorization
                 Name = name;
             }
 
-            public override AssertionResult Assert(AssertionContext<TState> context)
+            protected override AssertionResult Assert(AssertionContext<TState> context)
                 => assert(context);
 
-            public override string BuildMessage(AssertionContext<TState> context)
+            protected override string BuildMessage(AssertionContext<TState> context)
                 => messageBuilder(context);
         }
     }
