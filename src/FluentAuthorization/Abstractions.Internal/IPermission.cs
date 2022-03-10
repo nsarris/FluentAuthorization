@@ -5,7 +5,7 @@
         
     }
 
-    public interface IPermission<TData> //: IPermission
+    public interface IPermission<TData>
     {
         
     }

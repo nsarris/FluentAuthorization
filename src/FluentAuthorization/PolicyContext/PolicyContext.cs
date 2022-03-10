@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FluentAuthorization
 {
-    internal class PolicyContext<T, TUser, TResource, TData> : IPolicyContext<T>, IPolicyContextDataInternal<TData>
+    internal class PolicyContext<T, TUser, TResource, TData> : IPolicyContext<T>, IDataContainer<TData>
         where T : Policy<TUser, TResource, TData>
     {
         private readonly TUser user;
@@ -11,7 +13,7 @@ namespace FluentAuthorization
             T policy,
             TUser user,
             TResource resource,
-            TData data)
+            IEnumerable<TData> data)
         {
             Data = data;
             Resource = resource;
@@ -19,7 +21,7 @@ namespace FluentAuthorization
             this.user = user;
         }
 
-        public TData Data { get; }
+        public IEnumerable<TData> Data { get; }
         public T Policy { get; }
         public TResource Resource { get; }
 
@@ -30,7 +32,10 @@ namespace FluentAuthorization
 
             var typedPermission = (Policy<TUser, TResource, TData>.Permission)permission;
 
-            return typedPermission.Assert(new Policy<TUser, TResource, TData>.AssertionContext(user, Resource, Data, typedPermission, Policy.Name));
+            //TODO: Aggregate results
+            var data = Policy.Aggregate(Data);
+
+            return typedPermission.Assert(new Policy<TUser, TResource, TData>.AssertionContext(user, Resource, data, typedPermission, Policy.Name));
         }
 
         public AssertionResult Assert<TState>(Func<T, IPermission<TState>> select, TState state)
@@ -39,7 +44,10 @@ namespace FluentAuthorization
 
             var typedPermission = (Policy<TUser, TResource, TData>.Permission<TState>)permission;
 
-            return typedPermission.Assert(new Policy<TUser, TResource, TData>.AssertionContext<TState>(user, Resource, Data, state, typedPermission, Policy.Name));
+            //TODO: Aggregate results
+            var data = Policy.Aggregate(Data);
+
+            return typedPermission.Assert(new Policy<TUser, TResource, TData>.AssertionContext<TState>(user, Resource, data, state, typedPermission, Policy.Name));
         }
     }
 }

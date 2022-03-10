@@ -40,11 +40,11 @@ namespace FluentAuthorization
                 );
         }
 
-        public IPolicyContextBuilder<TUser, TResource> ForResource<TResource>(TResource resource)
+        public IPolicyContextProvider<TUser, TResource> ForResource<TResource>(TResource resource)
         {
             if (resource is null) throw new ArgumentNullException(nameof(resource));
 
-            return new PolicyContextBuilder<TUser, TResource>(
+            return new PolicyContextProvider<TUser, TResource>(
                 resource, 
                 userContextProvider, 
                 dataProvider);

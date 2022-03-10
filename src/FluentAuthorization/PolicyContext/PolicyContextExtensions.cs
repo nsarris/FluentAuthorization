@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FluentAuthorization
 {
     public static class PolicyContextExtensions
     {
-        public static TData GetData<TData>(this IPolicyContext<IPolicyWithData<TData>> context)
+        public static IEnumerable<TData> GetData<TData>(this IPolicyContext<IPolicyWithData<TData>> context)
         {
-            var typedContext = (IPolicyContextDataInternal<TData>)context;
+            var typedContext = (IDataContainer<TData>)context;
 
             return typedContext.Data;
         }

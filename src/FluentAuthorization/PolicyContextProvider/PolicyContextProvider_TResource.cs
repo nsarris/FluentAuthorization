@@ -2,13 +2,13 @@
 
 namespace FluentAuthorization
 {
-    internal class PolicyContextBuilder<TUser, TResource> : IPolicyContextBuilder<TUser, TResource>
+    internal class PolicyContextProvider<TUser, TResource> : IPolicyContextProvider<TUser, TResource>
     {
         private readonly TResource resource;
         private readonly IUserContextProvider<TUser> userContextProvider;
         private readonly IPolicyDataProvider<TUser> dataProvider;
 
-        public PolicyContextBuilder(
+        public PolicyContextProvider(
             TResource resource,
             IUserContextProvider<TUser> userContextProvider,
             IPolicyDataProvider<TUser> dataProvider)
@@ -18,12 +18,12 @@ namespace FluentAuthorization
             this.dataProvider = dataProvider ?? throw new ArgumentNullException(nameof(dataProvider));
         }
 
-        public IPolicyContextBuilder<TUser, T, TResource> ForPolicy<T>() where T : class, IPolicyWithResource<TUser, TResource>, new()
+        public IPolicyContextProvider<TUser, T, TResource> ForPolicy<T>() where T : class, IPolicyWithResource<TUser, TResource>, new()
         {
             var policy = PolicyProvider.Get<T>();
 
-            var providerType = typeof(PolicyContextBuilder<,,,>).MakeGenericType(typeof(T), typeof(TUser), policy.ResourceType, policy.DataType);
-            return (IPolicyContextBuilder<TUser, T, TResource>)Activator.CreateInstance(providerType, new object[] { policy, resource, userContextProvider, dataProvider });
+            var providerType = typeof(PolicyContextProvider<,,,>).MakeGenericType(typeof(T), typeof(TUser), policy.ResourceType, policy.DataType);
+            return (IPolicyContextProvider<TUser, T, TResource>)Activator.CreateInstance(providerType, new object[] { policy, resource, userContextProvider, dataProvider });
         }
     }
 }
