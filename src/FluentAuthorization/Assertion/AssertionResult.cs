@@ -4,59 +4,23 @@ using System.Linq;
 
 namespace FluentAuthorization
 {
-    internal static class DefaultMessageBuilder
-    {
-        public static string BuildMessage(string user, string policy, string permission)
-        {
-            return $"User {user} was denied permission {permission} of policy {policy}.";
-        }
-
-        public static string BuildFailureMessage(string message, string reason)
-        {
-            return string.IsNullOrEmpty(reason) ? message : $"{message} - Reason: {reason}";
-        }
-    }
-
-    public class AssertionFailure
-    {
-        public AssertionFailure(string user, string permissionName, string policyName, string message, string reason)
-        {
-            User = user;
-            Permission = permissionName;
-            Policy = policyName;
-            Message = message;
-            Reason = reason;
-        }
-
-        public string User { get; }
-        public string Permission { get; }
-        public string Policy { get; }
-        public string Message { get; }
-        public string Reason { get; }
-
-        public override string ToString()
-        {
-            return DefaultMessageBuilder.BuildFailureMessage(Message, Reason);
-        }
-    }
-    
     public class AssertionResult
     {
         public static AssertionResult Success { get; } = new();
 
-        public AssertionResult()
+        internal AssertionResult()
         {
             Allow = true;
             Failures = Enumerable.Empty<AssertionFailure>();
         }
 
-        public AssertionResult(AssertionFailure failure)
+        internal AssertionResult(AssertionFailure failure)
         {
             Allow = false;
             Failures = failure is null ? Enumerable.Empty<AssertionFailure>() : new[] { failure };
         }
 
-        public AssertionResult(bool allow, IEnumerable<AssertionFailure> reasons)
+        internal AssertionResult(bool allow, IEnumerable<AssertionFailure> reasons)
         {
             Allow = allow;
             Failures = reasons switch
@@ -72,15 +36,20 @@ namespace FluentAuthorization
 
         public IEnumerable<AssertionFailure> Failures { get; }
 
-        public static bool operator true(AssertionResult result)
-        {
-            return result?.Allow ?? true;
-        }
+        /// <summary>
+        /// Switch off short-circuit behaviour to evaluate all assertions.
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static bool operator true(AssertionResult result) => false;
 
-        public static bool operator false(AssertionResult result)
-        {
-            return result?.Deny ?? false;
-        }
+        /// <summary>
+        /// Switch off short-circuit behaviour to evaluate all assertions.
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static bool operator false(AssertionResult result) => false;
+        
 
         public static bool operator !(AssertionResult result)
         {

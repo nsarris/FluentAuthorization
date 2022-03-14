@@ -40,7 +40,7 @@ namespace SampleApplication.Authorization.Policies
         public Permission Create { get; private set; }
         public Permission Update { get; private set; }
         public Permission Delete { get; private set; }
-        public Permission<Customer> ViewRealName { get; private set; }
+        public Permission<Customer> ViewName { get; private set; }
         public Permission<Customer> ViewCustomer { get; private set; }
 
         public CustomerPolicy() 
@@ -53,16 +53,19 @@ namespace SampleApplication.Authorization.Policies
 
             Create = permissionBuilder
                 .AssertWith(ctx => ctx.Data.Create)
+                .WithName(nameof(Create))
                 .Build()
                 ;
 
             Update = permissionBuilder
                 .AssertWith(ctx => ctx.Data.Update)
+                .WithName(nameof(Update))
                 .Build()
                 ;
 
             Delete = permissionBuilder
                 .AssertWith(ctx => ctx.Data.Delete)
+                .WithName(nameof(Delete))
                 .Build() 
                 ;
 
@@ -74,15 +77,17 @@ namespace SampleApplication.Authorization.Policies
                             (ctx.Data.ViewVip || !ctx.State.IsVip) &&
                             ctx.State.Accounts.Sum(x => x.Balance) <= ctx.Data.ViewBalanceLimit)
                 )
+                .WithName(nameof(ViewCustomer))
                 .Build()
                 ;
 
-            ViewRealName = permissionBuilder
+            ViewName = permissionBuilder
                 .AssertWith<Customer>(ctx =>
                         ctx.User.Roles.Any(x => x == RolesEnum.GeneralManager) ||
                             (!ctx.State.IsVip &&
                             ctx.State.Accounts.Sum(x => x.Balance) <= ctx.Data.ViewBalanceLimit)
                 )
+                .WithName(nameof(ViewName))
                 .WithMessage(ctx =>
                     $"Cannot view real name of VIP customer {ctx.State.Id}.")
                 .Build()

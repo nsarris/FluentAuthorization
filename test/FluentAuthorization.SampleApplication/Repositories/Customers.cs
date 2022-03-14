@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SampleApplication.Model
 {
-    static class Customers
+    public static class Customers
     {
         static List<Customer> customers;
         static List<Product> products;

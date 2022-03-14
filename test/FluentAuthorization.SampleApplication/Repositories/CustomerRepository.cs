@@ -66,7 +66,7 @@ namespace SampleApplication.Authorization.Repositories
 
             policyContext.ThrowOnDeny(x => x.ViewCustomer, customer);
 
-            if (!policyContext.Assert(x => x.ViewRealName, customer))
+            if (!policyContext.Assert(x => x.ViewName, customer))
                 customer.Name = "Name obfuscated";
 
             return customer;
@@ -80,7 +80,7 @@ namespace SampleApplication.Authorization.Repositories
                 .Where(customer => policyContext.Assert(x => x.ViewCustomer, customer))
                 .Select(customer =>
                 {
-                    if (!policyContext.Assert(x => x.ViewRealName, customer))
+                    if (!policyContext.Assert(x => x.ViewName, customer))
                         customer.Name = "Name obfuscated";
                     return customer;
                 })

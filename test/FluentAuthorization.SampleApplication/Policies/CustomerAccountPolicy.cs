@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SampleApplication.Authorization
+namespace SampleApplication.Authorization.Policies
 {
     public class CustomerAccountPolicy : BasePolicy<EntityTypeResource, CustomerAccountPolicy.CustomerAccountPolicyData>
     {
