@@ -1,4 +1,7 @@
-﻿namespace FluentAuthorization
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace FluentAuthorization
 {
     public abstract partial class Policy<TUser, TResource, T>
     {
@@ -13,6 +16,7 @@
             }
 
             public AssertionResult Deny(string reason = null) => new(new AssertionFailure(User.ToString(), PermissionName, PolicyName, permission.BuildMessage(this), reason));
+            public AssertionResult Deny(IEnumerable<string> reasons) => new(false, reasons.Select(r => new AssertionFailure(User.ToString(), PermissionName, PolicyName, permission.BuildMessage(this), r)));
         }
     }
 }

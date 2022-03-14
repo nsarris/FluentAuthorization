@@ -73,7 +73,7 @@ namespace FluentAuthorization.Tests
             Assert.True(result.Failures.Count() == 1);
             Assert.True(result.Failures.First().Permission == nameof(CustomerEntityPolicy.ViewCustomer));
             Assert.True(result.Failures.First().Policy == nameof(CustomerEntityPolicy));
-            Assert.True(result.Failures.First().Reason == null);
+            Assert.True(result.Failures.First().Reason is not null);
         }
 
         [Fact]
