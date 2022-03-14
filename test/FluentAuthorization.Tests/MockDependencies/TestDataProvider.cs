@@ -12,27 +12,62 @@ namespace FluentAuthorization.Tests
         public Task<IEnumerable<TData>> GetDataAsync<TPolicy, TResource, TData>(Principal user, TPolicy policy, TResource resource)
             where TPolicy : IPolicy<Principal, TResource, TData>
         {
-            return Task.FromResult(policy switch
+            return Task.FromResult(GetMockData<TPolicy, TResource, TData>(user, policy, resource).Cast<TData>());
+        }
+
+        private static IEnumerable<object> GetMockData<TPolicy, TResource, TData>(Principal user, TPolicy policy, TResource resource)
+            where TPolicy : IPolicy<Principal, TResource, TData>
+        {
+            return policy switch
             {
-                CustomerPolicy customerPolicy when resource is EntityTypeResource entityType =>
-                    new[] {
-                            new CustomerPolicy.CustomerPolicyData(
-                            create: false,
-                            delete: false,
-                            view: true,
-                            update: false,
-                            viewPersonnel: false,
-                            viewVip: true,
-                            viewBalanceLimit: 5000,
-                            viewRealNames: false)
-                    }.Cast<TData>(),
-                CustomerAccountPolicy accountPolicy when resource is EntityTypeResource entityType =>
-                    new[]
-                    {
-                            new CustomerAccountPolicy.CustomerAccountPolicyData(true,true, true, true, 0)
-                    }.Cast<TData>(),
+                CustomerEntityPolicy customerEntityPolicy when resource is EntityTypeResource entityType => GetCustomerEntityPolicyData(),
+                CustomerRecordPolicy customerRecordPolicy when resource is CustomerRecordResource recordResource => GetCustomerRecordPolicyData(recordResource),
                 _ => throw new InvalidOperationException("Policy not supported")
-            });
+            };
+        }
+
+        private static IEnumerable<CustomerEntityPolicy.Data> GetCustomerEntityPolicyData()
+        {
+            return new[] {
+                new CustomerEntityPolicy.Data(
+                create: false,
+                delete: false,
+                view: true,
+                update: false,
+                viewPersonnel: false,
+                viewVip: true,
+                viewBalanceLimit: 5000,
+                viewRealNames: false)
+            };
+        }
+
+        private static IEnumerable<RecordPolicyData> GetCustomerRecordPolicyData(CustomerRecordResource resource)
+        {
+            return resource.Id switch
+            {
+                1 => new RecordPolicyData[]
+                {
+                    new(create: false,
+                        delete: false,
+                        view: true,
+                        update: false),
+                },
+                2 => new RecordPolicyData[]
+                {
+                    new(create: false,
+                        delete: false,
+                        view: false,
+                        update: false),
+                },
+                3 => new RecordPolicyData[]
+                {
+                    new(create: false,
+                        delete: false,
+                        view: false,
+                        update: false),
+                },
+                _ => throw new InvalidOperationException("Resource not found.")
+            };
         }
     }
 }

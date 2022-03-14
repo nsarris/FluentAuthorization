@@ -8,21 +8,22 @@ using System.Threading.Tasks;
 
 namespace SampleApplication.Authorization.Policies
 {
-    
-    public class CustomerPolicy : BasePolicy<EntityTypeResource, CustomerPolicy.CustomerPolicyData>
-    {
-        public class CustomerPolicyData
-        {
-            public bool ViewVip { get; private set; }
-            public bool ViewPersonnel { get; private set; }
-            public bool View { get; private set; }
-            public bool Create { get; private set; }
-            public bool Update { get; private set; }
-            public bool Delete { get; private set; }
-            public decimal ViewBalanceLimit { get; private set; }
-            public bool ViewRealNames { get; private set; }
 
-            public CustomerPolicyData(bool create, bool update, bool delete, bool view, bool viewVip, bool viewPersonnel, decimal viewBalanceLimit, bool viewRealNames)
+
+    public class CustomerEntityPolicy : BasePolicy<EntityTypeResource, CustomerEntityPolicy.Data>
+    {
+        public class Data
+        {
+            public bool ViewVip { get; }
+            public bool ViewPersonnel { get; }
+            public bool View { get; }
+            public bool Create { get; }
+            public bool Update { get; }
+            public bool Delete { get; }
+            public decimal ViewBalanceLimit { get; }
+            public bool ViewRealNames { get; }
+
+            public Data(bool create, bool update, bool delete, bool view, bool viewVip, bool viewPersonnel, decimal viewBalanceLimit, bool viewRealNames)
             {
                 Create = create;
                 Update = update;
@@ -36,14 +37,14 @@ namespace SampleApplication.Authorization.Policies
         }
 
         //[DisplayName]
-        public Permission View { get; private set; }
-        public Permission Create { get; private set; }
-        public Permission Update { get; private set; }
-        public Permission Delete { get; private set; }
-        public Permission<Customer> ViewName { get; private set; }
-        public Permission<Customer> ViewCustomer { get; private set; }
+        public Permission View { get; }
+        public Permission Create { get; }
+        public Permission Update { get; }
+        public Permission Delete { get; }
+        public Permission<Customer> ViewName { get; }
+        public Permission<Customer> ViewCustomer { get; }
 
-        public CustomerPolicy() 
+        public CustomerEntityPolicy() 
         {
             View = permissionBuilder
                 .AssertWith(ctx => ctx.Data.View)
