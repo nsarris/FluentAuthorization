@@ -1,7 +1,0 @@
-1. Permission Name (user expression/reflection)
-2. Permission Message
-3. Custom data on assertion
-4. Rename UserContext -> Principal
-5. Data Aggregation / Permission Aggregation
-6. More tests
-7. Cleanup files and structure (add internal namepsace)
