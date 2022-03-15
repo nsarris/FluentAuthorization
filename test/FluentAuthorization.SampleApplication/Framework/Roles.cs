@@ -1,6 +1,6 @@
 ﻿namespace SampleApplication.Authorization
 {
-    public enum RolesEnum
+    public enum Roles
     {
         Cashier,
         Officer,

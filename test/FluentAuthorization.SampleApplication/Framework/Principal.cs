@@ -8,9 +8,9 @@ namespace SampleApplication.Authorization
         public string UserId { get; }
         public string UserName { get; }
 
-        public IEnumerable<RolesEnum> Roles { get; }
+        public IEnumerable<Roles> Roles { get; }
 
-        public Principal(string userid, string userName, IEnumerable<RolesEnum> roles)
+        public Principal(string userid, string userName, IEnumerable<Roles> roles)
         {
             UserId = userid;
             UserName = userName;

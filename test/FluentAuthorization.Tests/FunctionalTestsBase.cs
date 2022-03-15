@@ -1,4 +1,5 @@
-﻿using SampleApplication.Authorization;
+﻿using Moq;
+using SampleApplication.Authorization;
 using SampleApplication.Authorization.Policies;
 using SampleApplication.Authorization.Repositories;
 using SampleApplication.Model;

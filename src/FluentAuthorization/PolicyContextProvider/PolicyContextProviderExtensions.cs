@@ -14,7 +14,21 @@ namespace FluentAuthorization
             return typedProvider.BuildContextAsync(data);
         }
 
+        public static Task<IPolicyContext<T>> BuildContextAsync<TUser, T, TResource, TData>(this IPolicyContextProvider<TUser, T, TResource> provider, IEnumerable<TData> data)
+            where T : IPolicy<TUser, TResource, TData>
+        {
+            var typedProvider = (IPolicyContextProvider<TUser, T, TResource, TData>)provider;
+            return typedProvider.BuildContextAsync(data);
+        }
+
         public static IPolicyContext<T> BuildContext<TUser, T, TResource, TData>(this IPolicyContextProvider<TUser, T, TResource> provider, TUser user, TData data)
+            where T : IPolicy<TUser, TResource, TData>
+        {
+            var typedProvider = (IPolicyContextProvider<TUser, T, TResource, TData>)provider;
+            return typedProvider.BuildContext(user, data);
+        }
+
+        public static IPolicyContext<T> BuildContext<TUser, T, TResource, TData>(this IPolicyContextProvider<TUser, T, TResource> provider, TUser user, IEnumerable<TData> data)
             where T : IPolicy<TUser, TResource, TData>
         {
             var typedProvider = (IPolicyContextProvider<TUser, T, TResource, TData>)provider;

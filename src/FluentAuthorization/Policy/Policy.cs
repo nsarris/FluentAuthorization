@@ -19,8 +19,8 @@ namespace FluentAuthorization
 
         protected readonly PermissionBuilder permissionBuilder = new();
 
-        protected bool AggregateDataBeforeAssertion { get; } = false;
-        protected bool TreatUndefinedAsDeny { get; } = true;
+        protected bool AggregateDataBeforeAssertion { get; set; } = false;
+        protected bool TreatUndefinedAsDeny { get; set;  } = true;
 
         private static string BuildDefaultMessage(AssertionContextBase context)
         {
@@ -29,7 +29,7 @@ namespace FluentAuthorization
 
         protected virtual AssertionResult AggregateAssertions(IEnumerable<AssertionResult> results)
         {
-            return results.Aggregate(AssertionResult.Success, (acc, el) => acc && el);
+            return results.Aggregate(default(AssertionResult), (acc, el) => acc && el);
         }
 
         internal AssertionResult Assert(TUser user, TResource resource, IPermission permission, IEnumerable<T> data)

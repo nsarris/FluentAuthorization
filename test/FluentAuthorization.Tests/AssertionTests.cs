@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Moq;
+using SampleApplication.Authorization;
+using SampleApplication.Authorization.Policies;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -9,98 +10,149 @@ namespace FluentAuthorization.Tests
 {
     public class AssertionTests
     {
-        private AssertionResult GetSuccess() => AssertionResult.Success;
-        private AssertionResult GetFailure() => new(new AssertionFailure("", "", "", "", ""));
-
-        [Fact]
-        public void Should_Assert_Succcess_Is_Default()
+        private IPolicyContextProvider<TUser> GetPolicyContextProvider<TUser>(TUser user)
         {
-            var result1 = new AssertionResult();
+            var dataProviderMock = new Mock<IPolicyDataProvider<TUser>>();
+            var userProviderMock = new Mock<IUserContextProvider<TUser>>();
 
-            Assert.True(result1.Allow);
+            userProviderMock
+                .Setup(x => x.GetAsync())
+                .Returns(Task.FromResult(user));
+
+            return new PolicyContextProvider<TUser>(
+                userProviderMock.Object,
+                dataProviderMock.Object);
         }
 
-        [Fact]
-        public void Should_Assert_Failure_Is_Default()
-        {
-            var result1 = new AssertionResult(new AssertionFailure("", "", "", "", ""));
+        public class User { }
 
-            Assert.False(result1.Allow);
+        public class DefaultPolicy : Policy<User, Resource, DefaultPolicy.Data>
+        {
+            public class Data
+            {
+                public static readonly Data True = new () { Allow = true };
+                public static readonly Data False = new () { Allow = false };
+                public static readonly Data Null = new () { Allow = null };
+
+                public bool? Allow { get; set; }
+            }
+
+            public Permission Allows { get; }
+
+            public DefaultPolicy()
+            {
+                Allows = permissionBuilder.AssertWith(x => x.Data.Allow).Build();
+            }
         }
 
-        [Fact]
-        public void Should_Assert_Succcess_With_Logical_Comparison()
+        public class UndefinedAsAllowedPolicy : DefaultPolicy
         {
-            Assert.True(GetSuccess() && GetSuccess());
-            Assert.True(GetSuccess() && null);
-            Assert.True(null && GetSuccess());
-
-            Assert.True(GetSuccess() || GetFailure());
-            Assert.True(GetFailure() || GetSuccess());
-            Assert.True(GetSuccess() || null);
-            Assert.True(null || GetSuccess());
+            public UndefinedAsAllowedPolicy()
+            {
+                this.TreatUndefinedAsDeny = false;
+            }
         }
 
-        [Fact]
-        public void Should_Assert_Succcess_With_Binary_Comparison()
+        public class AggregateDataBeforeAssertionPolicy : DefaultPolicy
         {
-            Assert.True(GetSuccess() & GetSuccess());
-            Assert.True(GetSuccess() & null);
-            Assert.True(null & GetSuccess());
+            public AggregateDataBeforeAssertionPolicy()
+            {
+                this.AggregateDataBeforeAssertion = true;
+            }
 
-            Assert.True(GetSuccess() | GetFailure());
-            Assert.True(GetFailure() | GetSuccess());
-            Assert.True(GetSuccess() | null);
-            Assert.True(null | GetSuccess());
+            public override Data Aggregate(IEnumerable<Data> data)
+            {
+                return data.FirstOrDefault(x => x.Allow == true)
+                    ?? data.FirstOrDefault(x => x.Allow == false)
+                    ?? data.FirstOrDefault(x => x.Allow == null)
+                    ?? new();
+            }
         }
 
-        [Fact]
-        public void Should_Assert_Failure_With_Logical_Comparison()
-        {
-            Assert.False(GetFailure() && GetFailure());
-            Assert.False(GetSuccess() && GetFailure());
-            Assert.False(GetFailure() && GetSuccess());
-            Assert.False(GetFailure() && null);
-            Assert.False(null && GetFailure());
+        public class Resource { }
 
-            Assert.False(GetFailure() || GetFailure());
-            Assert.False(GetFailure() || null);
-            Assert.False(null || GetFailure());
+        [Theory]
+        [MemberData(nameof(GetPolicyDataForAggregationTests_With_Default_Options))]
+        public async Task Should_Aggegrate_Assertions_With_Default_Options(IEnumerable<DefaultPolicy.Data> data, bool? expected)
+        {
+            var policyContext = await GetPolicyContextProvider(new User())
+                .ForResource(new Resource())
+                .ForPolicy<DefaultPolicy>()
+                .BuildContextAsync(data);
+
+            var result = policyContext.Assert(x => x.Allows);
+
+            Assert.Equal(expected, result);
         }
 
-        [Fact]
-        public void Should_Assert_Failure_With_Binary_Comparison()
-        {
-            Assert.False(GetFailure() & GetFailure());
-            Assert.False(GetSuccess() & GetFailure());
-            Assert.False(GetFailure() & GetSuccess());
-            Assert.False(GetFailure() & null);
-            Assert.False(null & GetFailure());
+        public static IEnumerable<object[]> GetPolicyDataForAggregationTests_With_Default_Options()
+            => new object[][] {
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True, DefaultPolicy.Data.False, DefaultPolicy.Data.Null }, false },
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True, DefaultPolicy.Data.False }, false },
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True, DefaultPolicy.Data.Null }, true },
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.False, DefaultPolicy.Data.Null }, false },
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True, DefaultPolicy.Data.True}, true},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.False, DefaultPolicy.Data.False}, false},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.False }, false},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True }, true},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.Null }, false},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.Null, DefaultPolicy.Data.Null }, false},
+            };
 
-            Assert.False(GetFailure() | GetFailure());
-            Assert.False(GetFailure() | null);
-            Assert.False(null | GetFailure());
+        [Theory]
+        [MemberData(nameof(GetPolicyDataForAggregationTests_With_Undefined_As_Allowed))]
+        public async Task Should_Aggegrate_Assertions_With_Undefined_As_Allowed(IEnumerable<DefaultPolicy.Data> data, bool? expected)
+        {
+            var policyContext = await GetPolicyContextProvider(new User())
+                .ForResource(new Resource())
+                .ForPolicy<UndefinedAsAllowedPolicy>()
+                .BuildContextAsync(data);
+
+            var result = policyContext.Assert(x => x.Allows);
+
+            Assert.Equal(expected, result);
         }
 
+        public static IEnumerable<object[]> GetPolicyDataForAggregationTests_With_Undefined_As_Allowed()
+            => new object[][] {
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True, DefaultPolicy.Data.False, DefaultPolicy.Data.Null }, false },
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True, DefaultPolicy.Data.False }, false },
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True, DefaultPolicy.Data.Null }, true },
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.False, DefaultPolicy.Data.Null }, false },
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True, DefaultPolicy.Data.True}, true},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.False, DefaultPolicy.Data.False}, false},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.False }, false},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True }, true},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.Null }, true},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.Null, DefaultPolicy.Data.Null }, true},
+            };
 
-        [Fact]
-        public void Should_Combine_Failures_Logical_Comparison()
+        [Theory]
+        [MemberData(nameof(GetPolicyDataForAggregationTests_With_Aggregate_Data_Before_Assertion))]
+        public async Task Should_Aggegrate_Assertions_With_Aggregate_Data_Before_Assertion(IEnumerable<DefaultPolicy.Data> data, bool? expected)
         {
-            var result1 = GetFailure() && GetFailure();
-            var result2 = GetFailure() || GetFailure();
-            
-            Assert.True(result1.Failures.Count() == 2);
-            Assert.True(result2.Failures.Count() == 2);
+            var policyContext = await GetPolicyContextProvider(new User())
+                .ForResource(new Resource())
+                .ForPolicy<AggregateDataBeforeAssertionPolicy>()
+                .BuildContextAsync(data);
+
+            var result = policyContext.Assert(x => x.Allows);
+
+            Assert.Equal(expected, result);
         }
 
-        [Fact]
-        public void Should_Combine_Failures_Binary_Comparison()
-        {
-            var result1 = GetFailure() & GetFailure();
-            var result2 = GetFailure() | GetFailure();
-
-            Assert.True(result1.Failures.Count() == 2);
-            Assert.True(result2.Failures.Count() == 2);
-        }
+        public static IEnumerable<object[]> GetPolicyDataForAggregationTests_With_Aggregate_Data_Before_Assertion()
+            => new object[][] {
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True, DefaultPolicy.Data.False, DefaultPolicy.Data.Null }, true },
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True, DefaultPolicy.Data.False }, true },
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True, DefaultPolicy.Data.Null }, true },
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.False, DefaultPolicy.Data.Null }, false },
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True, DefaultPolicy.Data.True}, true},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.False, DefaultPolicy.Data.False}, false},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.False }, false},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.True }, true},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.Null }, false},
+                new object[] { new DefaultPolicy.Data[] { DefaultPolicy.Data.Null, DefaultPolicy.Data.Null }, false},
+            };
     }
 }

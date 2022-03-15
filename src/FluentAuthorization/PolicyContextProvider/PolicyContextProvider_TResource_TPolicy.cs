@@ -56,6 +56,18 @@ namespace FluentAuthorization
             return new PolicyContext<T, TUser, TResource, TData>(Policy, user, Resource, new[] { data });
         }
 
+        async Task<IPolicyContext<T>> IPolicyContextProvider<TUser, T, TResource, TData>.BuildContextAsync(IEnumerable<TData> data)
+        {
+            var contextUser = await user.Value.ConfigureAwait(false);
+
+            return new PolicyContext<T, TUser, TResource, TData>(Policy, contextUser, Resource, data);
+        }
+
+        IPolicyContext<T> IPolicyContextProvider<TUser, T, TResource, TData>.BuildContext(TUser user, IEnumerable<TData> data)
+        {
+            return new PolicyContext<T, TUser, TResource, TData>(Policy, user, Resource, data);
+        }
+
         Task<IEnumerable<TData>> IDataProvider<TData>.GetDataAsync()
             => data.Value;
     }

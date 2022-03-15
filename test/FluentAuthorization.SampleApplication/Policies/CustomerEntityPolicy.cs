@@ -14,14 +14,19 @@ namespace SampleApplication.Authorization.Policies
     {
         public class Data
         {
-            public bool? ViewVip { get; }
-            public bool? ViewPersonnel { get; }
-            public bool? View { get; }
-            public bool? Create { get; }
-            public bool? Update { get; }
-            public bool? Delete { get; }
-            public decimal? ViewBalanceLimit { get; }
-            public bool? ViewRealNames { get; }
+            public bool? ViewVip { get; init; }
+            public bool? ViewPersonnel { get; init; }
+            public bool? View { get; init; }
+            public bool? Create { get; init; }
+            public bool? Update { get; init; }
+            public bool? Delete { get; init; }
+            public decimal? ViewBalanceLimit { get; init; }
+            public bool? ViewRealNames { get; init; }
+
+            public Data()
+            {
+
+            }
 
             public Data(bool? create, bool? update, bool? delete, bool? view, bool? viewVip, bool? viewPersonnel, decimal? viewBalanceLimit, bool? viewRealNames)
             {
@@ -73,7 +78,7 @@ namespace SampleApplication.Authorization.Policies
             ViewCustomer = permissionBuilder
                 .AssertWith<Customer>(ctx =>
                 {
-                    if (ctx.User.Roles.Any(x => x == RolesEnum.GeneralManager))
+                    if (ctx.User.Roles.Any(x => x == Roles.GeneralManager))
                         return ctx.Allow();
 
                     if (!ctx.Data.View.HasValue
@@ -110,7 +115,7 @@ namespace SampleApplication.Authorization.Policies
 
             ViewName = permissionBuilder
                 .AssertWith<Customer>(ctx =>
-                        ctx.User.Roles.Any(x => x == RolesEnum.GeneralManager) ||
+                        ctx.User.Roles.Any(x => x == Roles.GeneralManager) ||
                             (!ctx.State.IsVip &&
                             ctx.State.Accounts.Sum(x => x.Balance) <= ctx.Data.ViewBalanceLimit)
                 )

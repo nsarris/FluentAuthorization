@@ -15,7 +15,7 @@ namespace FluentAuthorization.Tests
 
         public TestFixture()
         {
-            User = new Principal("user1", "John Doe", new RolesEnum[] { RolesEnum.Cashier });
+            User = new Principal("user1", "John Doe", new Roles[] { Roles.Cashier });
             DataProvider = new TestDataProvider();
             UserContextProvider = new TestUserContextProvider(User);
 

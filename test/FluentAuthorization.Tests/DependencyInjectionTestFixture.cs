@@ -14,7 +14,7 @@ namespace FluentAuthorization.Tests
         
         public DependencyInjectionTestFixture()
         {
-            User = new Principal("user1", "John Doe", new RolesEnum[] { RolesEnum.Cashier });
+            User = new Principal("user1", "John Doe", new Roles[] { Roles.Cashier });
 
             var services = new ServiceCollection();
 

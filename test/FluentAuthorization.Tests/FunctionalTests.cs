@@ -15,8 +15,6 @@ namespace FluentAuthorization.Tests
             this.fixture = fixture;
         }
 
-        
-
         public override CustomerRepository GetCustomerRepository()
             => new CustomerRepository(fixture.PolicyContextProvider);
 
