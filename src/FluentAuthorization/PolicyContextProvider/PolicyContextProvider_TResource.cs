@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 
 namespace FluentAuthorization
 {
@@ -22,8 +23,7 @@ namespace FluentAuthorization
         {
             var policy = PolicyProvider.Get<T>();
 
-            var providerType = typeof(PolicyContextProvider<,,,>).MakeGenericType(typeof(T), typeof(TUser), policy.ResourceType, policy.DataType);
-            return (IPolicyContextProvider<TUser, T, TResource>)Activator.CreateInstance(providerType, new object[] { policy, resource, userContextProvider, dataProvider });
+            return PolicyContextProviderFactory<TUser, T, TResource>.Build(policy, resource, userContextProvider, dataProvider);
         }
     }
 }

@@ -88,9 +88,11 @@ namespace FluentAuthorization.Tests
         {
             var result1 = GetFailure() && GetFailure();
             var result2 = GetFailure() || GetFailure();
-            
-            Assert.True(result1.Failures.Count() == 2);
-            Assert.True(result2.Failures.Count() == 2);
+
+            //Short circuit logic, will only evaluate first failure
+            Assert.Single(result1.Failures);
+
+            Assert.Equal(2, result2.Failures.Count());
         }
 
         [Fact]
@@ -99,8 +101,10 @@ namespace FluentAuthorization.Tests
             var result1 = GetFailure() & GetFailure();
             var result2 = GetFailure() | GetFailure();
 
-            Assert.True(result1.Failures.Count() == 2);
-            Assert.True(result2.Failures.Count() == 2);
+            //Binary logic, will evaluate both failures
+            Assert.Equal(2, result1.Failures.Count());
+
+            Assert.Equal(2 ,result2.Failures.Count());
         }
     }
 }

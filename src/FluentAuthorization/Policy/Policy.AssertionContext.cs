@@ -15,8 +15,11 @@ namespace FluentAuthorization
                 this.permission = permission;
             }
 
-            public AssertionResult Deny(string reason = null) => new(new AssertionFailure(User.ToString(), PermissionName, PolicyName, permission.BuildMessage(this), reason));
-            public AssertionResult Deny(IEnumerable<string> reasons) => new(false, reasons.Select(r => new AssertionFailure(User.ToString(), PermissionName, PolicyName, permission.BuildMessage(this), r)));
+            private AssertionFailure BuildFailure(string reason)
+                => new AssertionFailure(User.ToString(), PermissionName, PolicyName, permission.BuildMessage(this), reason);
+
+            public AssertionResult Deny(string reason = null) => new(BuildFailure(reason));
+            public AssertionResult Deny(IEnumerable<string> reasons) => new(reasons.Select(BuildFailure));
         }
     }
 }

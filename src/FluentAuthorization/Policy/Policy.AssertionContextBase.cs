@@ -20,8 +20,6 @@
             public string PolicyName { get; }
 
             public AssertionResult Allow() => AssertionResult.Success;
-            //public AssertionResult Deny(string reason = null) => new(new AssertionFailure(PermissionName, PolicyName, reason));
-
             public AssertionResult Undefined() => null;
         }
     }

@@ -14,7 +14,6 @@ namespace FluentAuthorization
         public virtual string Name => this.GetType().Name;
         public override string ToString() => Name;
 
-        //public abstract T Aggregate(IEnumerable<T> data);
         public virtual T Aggregate(IEnumerable<T> data) => throw new NotImplementedException($"Data aggregation is not implemented for policy type {this.GetType().FullName}");
 
         protected readonly PermissionBuilder permissionBuilder = new();

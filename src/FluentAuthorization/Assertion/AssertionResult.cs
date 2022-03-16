@@ -10,19 +10,15 @@ namespace FluentAuthorization
 
         internal AssertionResult()
         {
-            Allow = true;
+            Deny = false;
+            Allow = !Deny;
             Failures = Enumerable.Empty<AssertionFailure>();
         }
 
-        internal AssertionResult(AssertionFailure failure)
+        internal AssertionResult(IEnumerable<AssertionFailure> reasons)
         {
-            Allow = false;
-            Failures = failure is null ? Enumerable.Empty<AssertionFailure>() : new[] { failure };
-        }
-
-        internal AssertionResult(bool allow, IEnumerable<AssertionFailure> reasons)
-        {
-            Allow = allow;
+            Deny = true;
+            Allow = !Deny;
             Failures = reasons switch
             {
                 null => Enumerable.Empty<AssertionFailure>(),
@@ -30,9 +26,14 @@ namespace FluentAuthorization
                 _ => reasons.ToArray()
             };
         }
+        internal AssertionResult(AssertionFailure failure)
+            : this(new[] { failure })
+        {
 
+        }
+
+        public bool Deny { get; }
         public bool Allow { get; }
-        public bool Deny => !Allow;
 
         public IEnumerable<AssertionFailure> Failures { get; }
 
@@ -41,14 +42,14 @@ namespace FluentAuthorization
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        public static bool operator true(AssertionResult result) => false;
+        public static bool operator true(AssertionResult result) => result is not null && result.Allow ;
 
         /// <summary>
         /// Switch off short-circuit behaviour to evaluate all assertions.
         /// </summary>
         /// <param name="result"></param>
         /// <returns></returns>
-        public static bool operator false(AssertionResult result) => false;
+        public static bool operator false(AssertionResult result) => result is not null && result.Deny;
         
 
         public static bool operator !(AssertionResult result)
@@ -60,14 +61,20 @@ namespace FluentAuthorization
         {
             if (left is null) return right;
             if (right is null) return left;
-            return new AssertionResult(left.Allow && right.Allow, left.Failures.Concat(right.Failures));
+            
+            return left.Allow && right.Allow ? 
+                Success : 
+                new AssertionResult(left.Failures.Concat(right.Failures));
         }
 
         public static AssertionResult operator |(AssertionResult left, AssertionResult right)
         {
             if (left is null) return right;
             if (right is null) return left;
-            return new AssertionResult(left.Allow || right.Allow, left.Failures.Concat(right.Failures));
+            
+            return left.Allow || right.Allow ? 
+                Success :
+                new AssertionResult(left.Failures.Concat(right.Failures));
         }
 
         public static implicit operator bool(AssertionResult assertionresult)
