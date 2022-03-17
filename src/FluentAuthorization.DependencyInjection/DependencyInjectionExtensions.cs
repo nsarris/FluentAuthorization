@@ -5,6 +5,13 @@ namespace FluentAuthorization.DependencyInjection
 {
     public static class DependencyInjectionExtensions
     {
+        /// <summary>
+        /// Setup Dependency Injection for FluentAuthorization.
+        /// </summary>
+        /// <typeparam name="TUser">The type of user context.</typeparam>
+        /// <param name="services">The source services collection.</param>
+        /// <param name="configure">The configuration method.</param>
+        /// <returns></returns>
         public static IServiceCollection AddFluentAuthorization<TUser>(this IServiceCollection services, Action<DependencyBuilder<TUser>> configure)
         {
             var builder = new DependencyBuilder<TUser>(services);

@@ -2,7 +2,7 @@
 
 namespace FluentAuthorization
 {
-    public abstract partial class Policy<TUser, TResource, T>
+    public abstract partial class Policy<TUser, TResource, TData>
     {
         internal class InlinePermission<TState> : Permission<TState>
         {

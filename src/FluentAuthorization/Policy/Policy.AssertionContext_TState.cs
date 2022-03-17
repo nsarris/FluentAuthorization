@@ -3,13 +3,13 @@ using System.Linq;
 
 namespace FluentAuthorization
 {
-    public abstract partial class Policy<TUser, TResource, T>
+    public abstract partial class Policy<TUser, TResource, TData>
     {
         public class AssertionContext<TState> : AssertionContextBase
         {
             private readonly IPermission<TState> permission;
 
-            internal AssertionContext(TUser user, TResource resource, T data, TState state, IPermission<TState> permission, string policyName)
+            internal AssertionContext(TUser user, TResource resource, TData data, TState state, IPermission<TState> permission, string policyName)
                 : base(user, resource, data, permission.Name, policyName)
             {
                 State = state;

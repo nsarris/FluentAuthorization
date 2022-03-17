@@ -1,6 +1,6 @@
 ﻿namespace FluentAuthorization
 {
-    public abstract partial class Policy<TUser, TResource, T>
+    public abstract partial class Policy<TUser, TResource, TData>
     {
         internal interface IPermission<TState>
         {
@@ -9,6 +9,7 @@
             string Name { get; }
         }
 
+        /// Abstract policy permission with an input state. Inherit from this class to define your own permission classes if you opt ouf using the inline delegate based permission builder.
         public abstract class Permission<TState> : FluentAuthorization.IPermission<TState>, IPermission<TState>
         {
             protected abstract AssertionResult Assert(AssertionContext<TState> context);

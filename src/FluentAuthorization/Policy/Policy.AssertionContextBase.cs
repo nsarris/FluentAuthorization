@@ -1,10 +1,10 @@
 ﻿namespace FluentAuthorization
 {
-    public abstract partial class Policy<TUser, TResource, T>
+    public abstract partial class Policy<TUser, TResource, TData>
     {
         public abstract class AssertionContextBase
         {
-            protected AssertionContextBase(TUser user, TResource resource, T data, string permissionName, string policyName)
+            protected AssertionContextBase(TUser user, TResource resource, TData data, string permissionName, string policyName)
             {
                 Data = data;
                 Resource = resource;
@@ -15,7 +15,7 @@
 
             public TUser User { get; set; }
             public TResource Resource { get; }
-            public T Data { get; }
+            public TData Data { get; }
             public string PermissionName { get; }
             public string PolicyName { get; }
 

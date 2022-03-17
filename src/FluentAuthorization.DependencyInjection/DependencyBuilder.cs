@@ -16,6 +16,13 @@ namespace FluentAuthorization.DependencyInjection
             Services = services;
         }
 
+        /// <summary>
+        /// Define your own PolicyContextProvider implementation and marker interface. Use this to encapsulate your TUser type to avoid repetion.
+        /// </summary>
+        /// <typeparam name="TService">The type of of PolicyContextProvider implementation.</typeparam>
+        /// <typeparam name="TImplementation">The type of of PolicyContextProvider interface.</typeparam>
+        /// <param name="serviceLifetime"></param>
+        /// <returns></returns>
         public DependencyBuilder<TUser> AddCustomPolicyContextProvider<TService, TImplementation>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
             where TService : IPolicyContextProvider<TUser>
             where TImplementation : TService
@@ -25,6 +32,24 @@ namespace FluentAuthorization.DependencyInjection
 
             CustomPolicyContextProvider = true;
             
+            return this;
+        }
+
+        /// <summary>
+        /// Define your own PolicyContextProvider marker interface. Use this to encapsulate your TUser type to avoid repetion.
+        /// </summary>
+        /// <typeparam name="TService">The type of of PolicyContextProvider implementation.</typeparam>
+        /// <typeparam name="TImplementation">The type of of PolicyContextProvider interface.</typeparam>
+        /// <param name="serviceLifetime"></param>
+        /// <returns></returns>
+        public DependencyBuilder<TUser> AddCustomPolicyContextProvider<TService>(ServiceLifetime serviceLifetime = ServiceLifetime.Transient)
+            where TService : IPolicyContextProvider<TUser>
+        {
+            Services.Add(new ServiceDescriptor(typeof(TService), typeof(PolicyContextProvider<TUser>), serviceLifetime));
+            Services.Map<IPolicyContextProvider<TUser>, TService>();
+
+            CustomPolicyContextProvider = true;
+
             return this;
         }
 
