@@ -1,22 +1,16 @@
 ﻿namespace SampleApplication.Authorization.Policies
 {
-    public class CustomerRecordResource : RecordResource
-    {
-        public CustomerRecordResource(int id)
-            : base(EntityType.Customer, id)
-        {
 
-        }
-    }
-
-    public class CustomerRecordPolicy : RecordPolicy<CustomerRecordResource, RecordPolicyData>
+    public class BaseEntityPolicy<TResource, TData> : BasePolicy<TResource, TData>
+        where TResource : EntityTypeResource
+        where TData : BaseEntityPolicyData
     {
         public Permission View { get; }
         public Permission Create { get; }
         public Permission Update { get; }
         public Permission Delete { get; }
 
-        public CustomerRecordPolicy()
+        public BaseEntityPolicy()
         {
             View = permissionBuilder
                 .AssertWith(ctx => ctx.Data.View)

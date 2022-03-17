@@ -16,7 +16,7 @@ namespace FluentAuthorization.Tests
 
         public Task<IPolicyContext<CustomerEntityPolicy>> GetCustomerPolicyContextAsync()
             => GetPolicyContextProvider()
-                .ForResource(EntityTypeResource.Customer)
+                .ForResource(CustomerResource.Instance)
                 .ForPolicy<CustomerEntityPolicy>()
                 .BuildContextAsync();
 

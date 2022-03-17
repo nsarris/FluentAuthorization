@@ -8,27 +8,17 @@ using System.Threading.Tasks;
 
 namespace SampleApplication.Authorization.Policies
 {
-
-
-    public class CustomerEntityPolicy : BasePolicy<EntityTypeResource, CustomerEntityPolicy.Data>
+    public class CustomerEntityPolicy : BaseEntityPolicy<CustomerResource, CustomerEntityPolicy.Data>
     {
-        public class Data
+        public class Data : BaseEntityPolicyData
         {
             public bool? ViewVip { get; init; }
             public bool? ViewPersonnel { get; init; }
-            public bool? View { get; init; }
-            public bool? Create { get; init; }
-            public bool? Update { get; init; }
-            public bool? Delete { get; init; }
             public decimal? ViewBalanceLimit { get; init; }
             public bool? ViewRealNames { get; init; }
 
-            public Data()
-            {
-
-            }
-
             public Data(bool? create, bool? update, bool? delete, bool? view, bool? viewVip, bool? viewPersonnel, decimal? viewBalanceLimit, bool? viewRealNames)
+                :base(create, update, delete, view)
             {
                 Create = create;
                 Update = update;
@@ -41,40 +31,11 @@ namespace SampleApplication.Authorization.Policies
             }
         }
 
-        //[DisplayName]
-        public Permission View { get; }
-        public Permission Create { get; }
-        public Permission Update { get; }
-        public Permission Delete { get; }
         public Permission<Customer> ViewName { get; }
         public Permission<Customer> ViewCustomer { get; }
 
         public CustomerEntityPolicy()
         {
-            View = permissionBuilder
-                .AssertWith(ctx => ctx.Data.View)
-                .WithName(nameof(View))
-                .Build()
-                ;
-
-            Create = permissionBuilder
-                .AssertWith(ctx => ctx.Data.Create)
-                .WithName(nameof(Create))
-                .Build()
-                ;
-
-            Update = permissionBuilder
-                .AssertWith(ctx => ctx.Data.Update)
-                .WithName(nameof(Update))
-                .Build()
-                ;
-
-            Delete = permissionBuilder
-                .AssertWith(ctx => ctx.Data.Delete)
-                .WithName(nameof(Delete))
-                .Build()
-                ;
-
             ViewCustomer = permissionBuilder
                 .AssertWith<Customer>(ctx =>
                 {

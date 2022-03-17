@@ -6,13 +6,13 @@ namespace SampleApplication.Authorization
 {
     public class RecordResource
     {
-        public RecordResource(EntityTypeResource type, int id)
+        public RecordResource(EntityType type, int id)
         {
             Type = type;
             Id = id;
         }
 
-        public EntityTypeResource Type { get; }
+        public EntityType Type { get; }
         public int Id { get; }
     }
 }

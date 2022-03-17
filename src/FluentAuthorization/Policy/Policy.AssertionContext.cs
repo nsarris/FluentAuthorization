@@ -19,7 +19,7 @@ namespace FluentAuthorization
             }
 
             private AssertionFailure BuildFailure(string reason)
-                => new AssertionFailure(User.ToString(), PermissionName, PolicyName, permission.BuildMessage(this), reason);
+                => new (User.ToString(), PermissionName, PolicyName, permission.BuildMessage(this), reason);
 
             /// <summary>
             /// Produces a Deny result with the specified reason.

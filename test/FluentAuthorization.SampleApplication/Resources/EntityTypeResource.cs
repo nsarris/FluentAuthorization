@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SampleApplication.Authorization
+﻿namespace SampleApplication.Authorization
 {
-    public enum EntityTypeResource
+    public class EntityTypeResource
     {
-        Customer,
-        Account,
-        Product
+        public EntityType EntityType { get; init; }
     }
 }

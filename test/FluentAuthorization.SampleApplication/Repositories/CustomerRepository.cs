@@ -23,7 +23,7 @@ namespace SampleApplication.Authorization.Repositories
         private Task<IPolicyContext<CustomerEntityPolicy>> GetSecurityContext()
             => policyContextProvider
                 //.ForUser(user)
-                .ForResource(EntityTypeResource.Customer)
+                .ForResource(CustomerResource.Instance)
                 .ForPolicy<CustomerEntityPolicy>()
                 .BuildContextAsync();
 
