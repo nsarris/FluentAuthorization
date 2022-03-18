@@ -1,0 +1,9 @@
+<Project>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<LangVersion>10.0</LangVersion>
+		<Version>1.0.0-preview.1</Version>
+		<InformationalVersion>$(VersionPrefix) - $(Configuration)</InformationalVersion>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+</Project>

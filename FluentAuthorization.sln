@@ -10,6 +10,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAuthorization.Tests", "test\FluentAuthorization.Tests\FluentAuthorization.Tests.csproj", "{F838E097-D26B-4288-84E6-0A717119F2D2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{0CB26E76-7141-43D5-9798-03B194D34B3D}"
+	ProjectSection(SolutionItems) = preProject
+		common.props = common.props
+		common.src.props = common.src.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentAuthorization.DependencyInjection", "src\FluentAuthorization.DependencyInjection\FluentAuthorization.DependencyInjection.csproj", "{81FC57C7-FFC9-443D-91F2-D9E5A30081C2}"
 EndProject
