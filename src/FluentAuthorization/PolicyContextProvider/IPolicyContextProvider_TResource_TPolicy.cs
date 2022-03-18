@@ -2,7 +2,11 @@
 
 namespace FluentAuthorization
 {
-    public interface IPolicyContextProvider<TUser, T, TResource> where T : IPolicyWithResource<TUser, TResource>
+    /// <summary>
+    /// A fluent provider of policy contexts.
+    /// </summary>
+    /// <typeparam name="TUser"></typeparam>
+    public interface IPolicyContextProvider<TUser, T> where T : IPolicy<TUser>
     {
         /// <summary>
         /// The encapsulated policy instance for this context.

@@ -16,14 +16,14 @@ namespace FluentAuthorization.Tests
 
         public Task<IPolicyContext<CustomerEntityPolicy>> GetCustomerPolicyContextAsync()
             => GetPolicyContextProvider()
-                .ForResource(CustomerResource.Instance)
+                .EnableUserCaching()
                 .ForPolicy<CustomerEntityPolicy>()
                 .BuildContextAsync();
 
         public Task<IPolicyContext<CustomerRecordPolicy>> GetCustomerRecordPolicyContextAsync(int id)
             => GetPolicyContextProvider()
-                .ForResource(new CustomerRecordResource(id))
                 .ForPolicy<CustomerRecordPolicy>()
+                .ForResource(new CustomerRecordResource(id))
                 .BuildContextAsync();
 
         [Fact]

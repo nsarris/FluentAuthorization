@@ -20,7 +20,7 @@ namespace FluentAuthorization.Tests
         {
             return policy switch
             {
-                CustomerEntityPolicy customerEntityPolicy when resource is EntityTypeResource entityType => GetCustomerEntityPolicyData(),
+                CustomerEntityPolicy customerEntityPolicy => GetCustomerEntityPolicyData(),
                 CustomerRecordPolicy customerRecordPolicy when resource is CustomerRecordResource recordResource => GetCustomerRecordPolicyData(recordResource),
                 _ => throw new InvalidOperationException("Policy not supported")
             };

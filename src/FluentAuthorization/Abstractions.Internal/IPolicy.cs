@@ -15,10 +15,15 @@ namespace FluentAuthorization
         Type ResourceType { get; }
     }
 
+    public interface IPolicy<TUser> : IPolicy
+    {
+
+    }
+
     /// <summary>
     /// Abtraction of a policy with a user and resource. Internal marker interface, not intended for implementation.
     /// </summary>
-    public interface IPolicyWithResource<TUser, TResource> : IPolicy
+    public interface IPolicyWithResource<TUser, TResource> : IPolicy<TUser>
     {
 
     }
@@ -34,7 +39,12 @@ namespace FluentAuthorization
     /// <summary>
     /// Abtraction of a policy with user, resource and data. Internal marker interface, not intended for implementation.
     /// </summary>
-    public interface IPolicy<TUser, TResource, TData> : IPolicyWithData<TData>, IPolicyWithResource<TUser, TResource>
+    public interface IPolicy<TUser, TResource, TData> : IPolicyWithResource<TUser, TResource>, IPolicy<TUser, TData>
+    {
+
+    }
+
+    public interface IPolicy<TUser, TData> : IPolicyWithData<TData>, IPolicy<TUser>
     {
 
     }

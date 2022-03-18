@@ -1,8 +1,7 @@
 ﻿namespace SampleApplication.Authorization.Policies
 {
 
-    public class BaseEntityPolicy<TResource, TData> : BasePolicy<TResource, TData>
-        where TResource : EntityTypeResource
+    public class BaseEntityPolicy<TData> : BasePolicy<EntityTypeResource, TData>
         where TData : BaseEntityPolicyData
     {
         public Permission View { get; }

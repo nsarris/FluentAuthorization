@@ -2,7 +2,7 @@
 
 namespace FluentAuthorization
 {
-    internal interface IDataContainer<TData>
+    internal interface IDataContainer<out TData>
     {
         IEnumerable<TData> Data { get; }
     }

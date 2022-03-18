@@ -14,11 +14,17 @@
         IPolicyContextProvider<TUser> ForUser(TUser user);
 
         /// <summary>
-        /// Set the resource for this context.
+        /// Enable caching of the user for subsequent context builds.
         /// </summary>
-        /// <typeparam name="TResource">the type of Resource.</typeparam>
-        /// <param name="resource">The given resource.</param>
+        /// <param name="user">The given user.</param>
         /// <returns></returns>
-        IPolicyContextProvider<TUser, TResource> ForResource<TResource>(TResource resource);
+        IPolicyContextProvider<TUser> EnableUserCaching();
+
+        /// <summary>
+        /// Set the policy for this context.
+        /// </summary>
+        /// <typeparam name="TPolicy">The type of Policy.</typeparam>
+        IPolicyContextProvider<TUser, TPolicy> ForPolicy<TPolicy>()
+            where TPolicy : class, IPolicy<TUser>, new();
     }
 }

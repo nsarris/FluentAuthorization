@@ -5,70 +5,95 @@ using System.Threading.Tasks;
 
 namespace FluentAuthorization
 {
-    internal class PolicyContextProvider<T, TUser, TResource, TData> :
-            IPolicyContextProvider<TUser, T, TResource, TData>,
+    internal class PolicyContextProvider<TPolicy, TUser, TResource, TData> :
+            IPolicyContextProviderWithData<TUser, TPolicy, TData>,
+            IPolicyContextProvider<TUser, TPolicy, TResource>,
             IDataProvider<TData>
-        where T : Policy<TUser, TResource, TData>
+        where TPolicy : Policy<TUser, TResource, TData>
     {
-        private readonly AsyncLazy<TUser> user;
-        private readonly AsyncLazy<IEnumerable<TData>> data;
+        private readonly IUserContextProvider<TUser> userContextProvider;
+        private readonly IPolicyDataProvider<TUser> dataProvider;
 
-        public T Policy { get; }
-        public TResource Resource { get; }
+        public TPolicy Policy { get; }
+        public TResource Resource { get; private set;  }
 
         public PolicyContextProvider(
-            T policy,
-            TResource resource,
+            TPolicy policy,
             IUserContextProvider<TUser> userContextProvider,
             IPolicyDataProvider<TUser> dataProvider)
         {
             Policy = policy;
+            this.userContextProvider = userContextProvider;
+            this.dataProvider = dataProvider;
+        }
+
+        public PolicyContextProvider(
+            TPolicy policy,
+            TResource resource,
+            IUserContextProvider<TUser> userContextProvider,
+            IPolicyDataProvider<TUser> dataProvider)
+            :this(policy, userContextProvider, dataProvider)
+        {
             Resource = resource;
+        }
+
+        private Task<IEnumerable<TData>> GetDataAsync(TUser user)
+        {
+            return dataProvider.GetDataAsync<TPolicy, TResource, TData>(user, Policy, Resource);
+        }
+
+        private async Task<IEnumerable<TData>> GetDataAsync()
+        {
+            return await GetDataAsync(
+                await userContextProvider.GetAsync().ConfigureAwait(false))
+                .ConfigureAwait(false);
+        }
+
+        async Task<IPolicyContext<TPolicy>> IPolicyContextProvider<TUser, TPolicy>.BuildContextAsync()
+        {
+            var contextUser = await userContextProvider.GetAsync().ConfigureAwait(false);
+            var contextData = await GetDataAsync(contextUser).ConfigureAwait(false);
             
-            user = new AsyncLazy<TUser>(() => userContextProvider.GetAsync());
-            data = new AsyncLazy<IEnumerable<TData>>(async () => await dataProvider.GetDataAsync<T, TResource, TData>(await user.Value.ConfigureAwait(false), Policy, Resource));
+            return new PolicyContext<TPolicy, TUser, TResource, TData>(Policy, contextUser, Resource, contextData);
         }
 
-        async Task<IPolicyContext<T>> IPolicyContextProvider<TUser, T, TResource>.BuildContextAsync()
+        async Task<IPolicyContext<TPolicy>> IPolicyContextProvider<TUser, TPolicy>.BuildContextAsync(TUser user)
         {
-            var contextUser = await user.Value.ConfigureAwait(false);
-            var contextData = await data.Value.ConfigureAwait(false);
-            
-            return new PolicyContext<T, TUser, TResource, TData>(Policy, contextUser, Resource, contextData);
+            var contextData = await GetDataAsync(user);
+
+            return new PolicyContext<TPolicy, TUser, TResource, TData>(Policy, user, Resource, contextData);
         }
 
-        async Task<IPolicyContext<T>> IPolicyContextProvider<TUser, T, TResource>.BuildContextAsync(TUser user)
+        async Task<IPolicyContext<TPolicy>> IPolicyContextProviderWithData<TUser, TPolicy, TData>.BuildContextAsync(TData data)
         {
-            var contextData = await data.Value.ConfigureAwait(false);
-
-            return new PolicyContext<T, TUser, TResource, TData>(Policy, user, Resource, contextData);
+            var contextUser = await userContextProvider.GetAsync().ConfigureAwait(false);
+                
+            return new PolicyContext<TPolicy, TUser, TResource, TData>(Policy, contextUser, Resource, new[] { data });
         }
 
-        async Task<IPolicyContext<T>> IPolicyContextProvider<TUser, T, TResource, TData>.BuildContextAsync(TData data)
+        IPolicyContext<TPolicy> IPolicyContextProviderWithData<TUser, TPolicy, TData>.BuildContext(TUser user, TData data)
         {
-            var contextUser = await user.Value.ConfigureAwait(false);
-            
-            return new PolicyContext<T, TUser, TResource, TData>(Policy, contextUser, Resource, new[] { data });
+            return new PolicyContext<TPolicy, TUser, TResource, TData>(Policy, user, Resource, new[] { data });
         }
 
-        IPolicyContext<T> IPolicyContextProvider<TUser, T, TResource, TData>.BuildContext(TUser user, TData data)
+        async Task<IPolicyContext<TPolicy>> IPolicyContextProviderWithData<TUser, TPolicy, TData>.BuildContextAsync(IEnumerable<TData> data)
         {
-            return new PolicyContext<T, TUser, TResource, TData>(Policy, user, Resource, new[] { data });
+            var contextUser = await userContextProvider.GetAsync().ConfigureAwait(false);
+
+            return new PolicyContext<TPolicy, TUser, TResource, TData>(Policy, contextUser, Resource, data);
         }
 
-        async Task<IPolicyContext<T>> IPolicyContextProvider<TUser, T, TResource, TData>.BuildContextAsync(IEnumerable<TData> data)
+        IPolicyContext<TPolicy> IPolicyContextProviderWithData<TUser, TPolicy, TData>.BuildContext(TUser user, IEnumerable<TData> data)
         {
-            var contextUser = await user.Value.ConfigureAwait(false);
-
-            return new PolicyContext<T, TUser, TResource, TData>(Policy, contextUser, Resource, data);
-        }
-
-        IPolicyContext<T> IPolicyContextProvider<TUser, T, TResource, TData>.BuildContext(TUser user, IEnumerable<TData> data)
-        {
-            return new PolicyContext<T, TUser, TResource, TData>(Policy, user, Resource, data);
+            return new PolicyContext<TPolicy, TUser, TResource, TData>(Policy, user, Resource, data);
         }
 
         Task<IEnumerable<TData>> IDataProvider<TData>.GetDataAsync()
-            => data.Value;
+            => GetDataAsync();
+
+        public IPolicyContextProvider<TUser, TPolicy, TResource> ForResource(TResource resource)
+        {
+            return new PolicyContextProvider<TPolicy, TUser, TResource, TData>(Policy, resource, userContextProvider, dataProvider);
+        }
     }
 }

@@ -76,7 +76,6 @@ namespace FluentAuthorization.Tests
         public async Task Should_Aggegrate_Assertions_With_Default_Options(IEnumerable<DefaultPolicy.Data> data, bool? expected)
         {
             var policyContext = await GetPolicyContextProvider(new User())
-                .ForResource(new Resource())
                 .ForPolicy<DefaultPolicy>()
                 .BuildContextAsync(data);
 
@@ -104,7 +103,6 @@ namespace FluentAuthorization.Tests
         public async Task Should_Aggegrate_Assertions_With_Undefined_As_Allowed(IEnumerable<DefaultPolicy.Data> data, bool? expected)
         {
             var policyContext = await GetPolicyContextProvider(new User())
-                .ForResource(new Resource())
                 .ForPolicy<UndefinedAsAllowedPolicy>()
                 .BuildContextAsync(data);
 
@@ -132,7 +130,6 @@ namespace FluentAuthorization.Tests
         public async Task Should_Aggegrate_Assertions_With_Aggregate_Data_Before_Assertion(IEnumerable<DefaultPolicy.Data> data, bool? expected)
         {
             var policyContext = await GetPolicyContextProvider(new User())
-                .ForResource(new Resource())
                 .ForPolicy<AggregateDataBeforeAssertionPolicy>()
                 .BuildContextAsync(data);
 

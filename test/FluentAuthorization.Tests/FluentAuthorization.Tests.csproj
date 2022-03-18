@@ -22,10 +22,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FluentAuthorization.DependencyInjection\FluentAuthorization.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\src\FluentAuthorization\FluentAuthorization.csproj" />
     <ProjectReference Include="..\FluentAuthorization.SampleApplication\FluentAuthorization.SampleApplication.csproj" />
-	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
   </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' != 'net451' ">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+	<ProjectReference Include="..\..\src\FluentAuthorization.DependencyInjection\FluentAuthorization.DependencyInjection.csproj" />
+  </ItemGroup>
+		
 
 </Project>

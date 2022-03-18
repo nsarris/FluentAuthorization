@@ -4,44 +4,45 @@ using System.Linq.Expressions;
 
 namespace FluentAuthorization
 {
-    internal class PolicyContextProviderFactory<TUser, TPolicy, TResource>
-        where TPolicy : class, IPolicyWithResource<TUser, TResource>, new()
+    internal delegate IPolicyContextProvider<TUser, TPolicy> Constructor<TUser, TPolicy>(
+            TPolicy policy,
+            IUserContextProvider<TUser> userContextProvider,
+            IPolicyDataProvider<TUser> policyDataProvider)
+        where TPolicy : class, IPolicy<TUser>, new();
+
+    internal static class PolicyContextProviderFactory<TUser, TPolicy>
+        where TPolicy : class, IPolicy<TUser>, new()
     {
-        public delegate IPolicyContextProvider<TUser, TPolicy, TResource> Constructor(
-            TPolicy policy, 
-            TResource resource, 
-            IUserContextProvider<TUser> userContextProvider, 
-            IPolicyDataProvider<TUser> policyDataProvider);
+        private static Constructor<TUser, TPolicy> constructor;
 
-        private static Constructor constructor;
-
-        public static IPolicyContextProvider<TUser, TPolicy, TResource> Build(TPolicy policy, TResource resource, IUserContextProvider<TUser> userContextProvider, IPolicyDataProvider<TUser> dataProvider)
+        public static IPolicyContextProvider<TUser, TPolicy> Build(TPolicy policy, IUserContextProvider<TUser> userContextProvider, IPolicyDataProvider<TUser> dataProvider)
         {
             constructor = GetCtor(policy);
 
-            return constructor(policy, resource, userContextProvider, dataProvider);
+            return constructor(policy, userContextProvider, dataProvider);
         }
 
-        public static Constructor GetCtor(TPolicy policy)
-            => constructor ??= BuildCtor(policy.DataType);
+        public static Constructor<TUser, TPolicy> GetCtor(TPolicy policy)
+            => constructor ??= BuildCtor(policy.ResourceType, policy.DataType);
         
-        private static Constructor BuildCtor(Type policyDataType)
+        private static Constructor<TUser, TPolicy> BuildCtor(Type resourceDataType, Type policyDataType)
         {
-            var providerType = typeof(PolicyContextProvider<,,,>).MakeGenericType(typeof(TPolicy), typeof(TUser), typeof(TResource), policyDataType);
+            var providerType = typeof(PolicyContextProvider<,,,>).MakeGenericType(typeof(TPolicy), typeof(TUser), resourceDataType, policyDataType);
 
-            var ctor = providerType.GetConstructors().Single();
-
-            var parameters = new[]
+            var ctorTypes = new[]
             {
-                Expression.Parameter(typeof(TPolicy)),
-                Expression.Parameter(typeof(TResource)),
-                Expression.Parameter(typeof(IUserContextProvider<TUser>)),
-                Expression.Parameter(typeof(IPolicyDataProvider<TUser>))
+                typeof(TPolicy),
+                typeof(IUserContextProvider<TUser>),
+                typeof(IPolicyDataProvider<TUser>)
             };
 
-            var body = Expression.Convert(Expression.New(ctor, parameters), typeof(IPolicyContextProvider<TUser, TPolicy, TResource>));
+            var ctor = providerType.GetConstructor(ctorTypes);
 
-            return Expression.Lambda<Constructor>(body, parameters).Compile();
+            var parameters = ctorTypes.Select(Expression.Parameter).ToArray();
+            
+            var body = Expression.Convert(Expression.New(ctor, parameters), typeof(IPolicyContextProvider<TUser, TPolicy>));
+
+            return Expression.Lambda<Constructor<TUser, TPolicy>>(body, parameters).Compile();
         }
     }
 }

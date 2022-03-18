@@ -22,6 +22,21 @@ namespace FluentAuthorization
             }
         }
 
+        class CachedUserProvider : IUserContextProvider<TUser>
+        {
+            private readonly AsyncLazy<TUser> user;
+
+            public CachedUserProvider(IUserContextProvider<TUser> provider)
+            {
+                this.user = new AsyncLazy<TUser>(provider.GetAsync);
+            }
+
+            public Task<TUser> GetAsync()
+            {
+                return user.Value;
+            }
+        }
+
         public PolicyContextProvider(
             IUserContextProvider<TUser> userContextProvider,
             IPolicyDataProvider<TUser> dataProvider)
@@ -40,13 +55,19 @@ namespace FluentAuthorization
                 );
         }
 
-        public IPolicyContextProvider<TUser, TResource> ForResource<TResource>(TResource resource)
-        {
-            if (resource is null) throw new ArgumentNullException(nameof(resource));
+        public IPolicyContextProvider<TUser> EnableUserCaching()
+        { 
+            return new PolicyContextProvider<TUser>(
+                new CachedUserProvider(userContextProvider),
+                dataProvider
+                );
+        }
 
-            return new PolicyContextProvider<TUser, TResource>(
-                resource, 
-                userContextProvider, 
+        public IPolicyContextProvider<TUser, TPolicy> ForPolicy<TPolicy>() where TPolicy : class, IPolicy<TUser>, new()
+        {
+            return PolicyContextProviderFactory<TUser, TPolicy>.Build(
+                PolicyProvider.Get<TPolicy>(),
+                userContextProvider,
                 dataProvider);
         }
     }

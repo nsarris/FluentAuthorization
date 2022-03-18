@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SampleApplication.Authorization.Policies
 {
-    public class CustomerEntityPolicy : BaseEntityPolicy<CustomerResource, CustomerEntityPolicy.Data>
+    public class CustomerEntityPolicy : BaseEntityPolicy<CustomerEntityPolicy.Data>
     {
         public class Data : BaseEntityPolicyData
         {
