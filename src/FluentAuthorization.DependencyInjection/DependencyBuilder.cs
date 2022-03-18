@@ -53,6 +53,9 @@ namespace FluentAuthorization.DependencyInjection
             return this;
         }
 
+        /// <summary>
+        /// Add a required user context provider dependency.
+        /// </summary>
         public DependencyBuilder<TUser> AddUserContextProvider<TService, TImplementation>(ServiceLifetime serviceLifetime)
             where TService : IUserContextProvider<TUser>
             where TImplementation : TService
@@ -62,6 +65,9 @@ namespace FluentAuthorization.DependencyInjection
             return this;
         }
 
+        /// <summary>
+        /// Add a required user context provider dependency.
+        /// </summary>
         public DependencyBuilder<TUser> AddUserContextProvider<TImplementation>(ServiceLifetime serviceLifetime)
             where TImplementation : IUserContextProvider<TUser>
         {
@@ -70,6 +76,9 @@ namespace FluentAuthorization.DependencyInjection
             return this;
         }
 
+        /// <summary>
+        /// Add a required user context provider dependency.
+        /// </summary>
         public DependencyBuilder<TUser> AddUserContextProvider<TImplementation>(TImplementation instance)
             where TImplementation : IUserContextProvider<TUser>
         {
@@ -78,6 +87,9 @@ namespace FluentAuthorization.DependencyInjection
             return this;
         }
 
+        /// <summary>
+        /// Add a required user context provider dependency.
+        /// </summary>
         public DependencyBuilder<TUser> AddUserContextProvider<TImplementation>(Func<IServiceProvider, TImplementation> factory, ServiceLifetime serviceLifetime)
             where TImplementation : IUserContextProvider<TUser>
         {
@@ -86,6 +98,9 @@ namespace FluentAuthorization.DependencyInjection
             return this;
         }
 
+        /// <summary>
+        /// Add a required policy data provider dependency.
+        /// </summary>
         public DependencyBuilder<TUser> AddDataProvider<TImplementation>(ServiceLifetime serviceLifetime)
             where TImplementation : IPolicyDataProvider<TUser>
         {
@@ -93,6 +108,9 @@ namespace FluentAuthorization.DependencyInjection
             return this;
         }
 
+        /// <summary>
+        /// Add a required policy data provider dependency.
+        /// </summary>
         public DependencyBuilder<TUser> AddDataProvider<TImplementation>(TImplementation instance)
             where TImplementation : IPolicyDataProvider<TUser>
         {
@@ -100,6 +118,9 @@ namespace FluentAuthorization.DependencyInjection
             return this;
         }
 
+        /// <summary>
+        /// Add a required policy data provider dependency.
+        /// </summary>
         public DependencyBuilder<TUser> AddDataProvider<TImplementation>(Func<IServiceProvider, TImplementation> factory, ServiceLifetime serviceLifetime)
             where TImplementation : IPolicyDataProvider<TUser>
         {
