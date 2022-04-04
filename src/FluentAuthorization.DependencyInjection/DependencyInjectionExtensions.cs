@@ -27,7 +27,8 @@ namespace FluentAuthorization.DependencyInjection
 
         internal static IServiceCollection Map(this IServiceCollection services, Type source, Type target)
         {
-            services.AddTransient(source, sp => sp.GetRequiredService(target));
+            if (source != target)
+                services.AddTransient(source, sp => sp.GetRequiredService(target));
             return services;
         }
 
