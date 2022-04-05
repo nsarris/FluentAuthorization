@@ -3,6 +3,7 @@ using SampleApplication.Authorization;
 using SampleApplication.Authorization.Policies;
 using SampleApplication.Authorization.Repositories;
 using SampleApplication.Model;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -99,6 +100,45 @@ namespace FluentAuthorization.Tests
             Assert.True(result.Failures.First().Permission == nameof(CustomerRecordPolicy.View));
             Assert.True(result.Failures.First().Policy == nameof(CustomerRecordPolicy));
             Assert.True(result.Failures.First().Reason == null);
+        }
+
+        [Fact]
+        public async Task Should_Resolve_Policy_By_Name()
+        {
+            var policyContext = await GetCustomerRecordPolicyContextAsync(1);
+
+            var result = policyContext.Assert("View");
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task Should_Resolve_Policy_By_Name_With_State()
+        {
+            var customers = Customers.Get();
+            var policyContext = await GetCustomerPolicyContextAsync();
+
+            var result = policyContext.Assert("ViewCustomer", customers[0]);
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task Should_Fail_To_Resolve_Policy_By_Name()
+        {
+            var policyContext = await GetCustomerRecordPolicyContextAsync(1);
+
+            Assert.Throws<ArgumentException>(() => policyContext.Assert("Bogus"));
+        }
+
+        [Fact]
+        public async Task Should_Fail_To_Resolve_Policy_By_Name_With_State()
+        {
+            var customers = Customers.Get();
+            var policyContext = await GetCustomerPolicyContextAsync();
+
+            Assert.Throws<ArgumentException>(() => policyContext.Assert("ViewCustomer", new Account()));
+            Assert.Throws<ArgumentException>(() => policyContext.Assert("Bogus", customers[0]));
         }
     }
 }

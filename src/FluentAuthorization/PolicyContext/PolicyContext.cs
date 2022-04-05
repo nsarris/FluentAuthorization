@@ -8,7 +8,7 @@ namespace FluentAuthorization
         where T : Policy<TUser, TResource, TData>
     {
         private readonly TUser user;
-        
+
         public PolicyContext(
             T policy,
             TUser user,
@@ -32,9 +32,23 @@ namespace FluentAuthorization
             return Policy.Assert(user, Resource, typedPermission, Data);
         }
 
+        public AssertionResult Assert(string permissionName)
+        {
+            var permission = PolicyReflector.GetPermission<T, TUser, TResource, TData>(Policy, permissionName);
+            var typedPermission = (Policy<TUser, TResource, TData>.Permission)permission;
+            return Policy.Assert(user, Resource, typedPermission, Data);
+        }
+
         public AssertionResult Assert<TState>(Func<T, IPermission<TState>> select, TState state)
         {
             var permission = select(Policy);
+            var typedPermission = (Policy<TUser, TResource, TData>.Permission<TState>)permission;
+            return Policy.Assert(user, Resource, typedPermission, Data, state);
+        }
+
+        public AssertionResult Assert<TState>(string permissionName, TState state)
+        {
+            var permission = PolicyReflector.GetPermission<T, TUser, TResource, TData, TState>(Policy, permissionName);
             var typedPermission = (Policy<TUser, TResource, TData>.Permission<TState>)permission;
             return Policy.Assert(user, Resource, typedPermission, Data, state);
         }

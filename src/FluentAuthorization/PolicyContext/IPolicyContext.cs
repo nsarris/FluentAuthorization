@@ -23,8 +23,22 @@ namespace FluentAuthorization
         /// <summary>
         /// Assert the selected permission.
         /// </summary>
+        /// <param name="permissionName">The permission property name to assert.</param>
+        /// <returns>An assertion resul.</returns>
+        AssertionResult Assert(string permissionName);
+
+        /// <summary>
+        /// Assert the selected permission.
+        /// </summary>
         /// <param name="select">The permission to assert.</param>
         /// <returns>An assertion resul.</returns>
         AssertionResult Assert<TState>(Func<T, IPermission<TState>> select, TState state);
+
+        /// <summary>
+        /// Assert the selected permission.
+        /// </summary>
+        /// <param name="permissionName">The permission property name to assert.</param>
+        /// <returns>An assertion resul.</returns>
+        AssertionResult Assert<TState>(string permissionName, TState state);
     }
 }
