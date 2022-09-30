@@ -55,11 +55,27 @@ namespace FluentAuthorization
             return results.Aggregate(default(AssertionResult), (acc, el) => acc & el);
         }
 
+        /// <summary>
+        /// Overrides default assertion logic.
+        /// </summary>
+        /// <param name="user">The assertion context user.</param>
+        /// <param name="resource">The assertion context resource.</param>
+        /// <param name="permissionName">The name of the asserted permission.</param>
+        /// <param name="data">The assertion context data.</param>
+        /// <returns>The overriden assertion result or null to apply default assertion logic.</returns>
+        protected virtual AssertionResult OverrideAssertion(TUser user, TResource resource, string permissionName, IEnumerable<TData> data)
+        {
+            return null;
+        }
+
         internal AssertionResult Assert(TUser user, TResource resource, IPermission permission, IEnumerable<TData> data)
         {
             data = AggregateDataInternal(data);
 
-            var results = data.Select(d => permission.Assert(new AssertionContext(user, resource, d, permission, Name)));
+            var overridenResult = OverrideAssertion(user, resource, permission.Name, data);
+            if (overridenResult is not null) return overridenResult;
+
+            var results = data.Select(d => permission.Assert(new AssertionContext(user, resource, d, permission, Name))).ToList();
 
             return AggregateAssertionsInternal(user.ToString(), permission.Name, results);
         }
@@ -68,7 +84,10 @@ namespace FluentAuthorization
         {
             data = AggregateDataInternal(data);
 
-            var results = data.Select(d => permission.Assert(new AssertionContext<TState>(user, resource, d, state, permission, Name)));
+            var overridenResult = OverrideAssertion(user, resource, permission.Name, data);
+            if (overridenResult is not null) return overridenResult;
+
+            var results = data.Select(d => permission.Assert(new AssertionContext<TState>(user, resource, d, state, permission, Name))).ToList();
 
             return AggregateAssertionsInternal(user.ToString(), permission.Name, results);
         }
