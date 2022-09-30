@@ -9,7 +9,7 @@ namespace FluentAuthorization
     /// </summary>
     public class AssertionResult
     {
-        internal static AssertionResult Success { get; } = new();
+        public static AssertionResult Success { get; } = new();
 
         private AssertionResult(bool deny)
         {
@@ -17,13 +17,13 @@ namespace FluentAuthorization
             Allow = !deny;
         }
 
-        internal AssertionResult()
+        public AssertionResult()
             :this(false)
         {
             Failures = Enumerable.Empty<AssertionFailure>();
         }
 
-        internal AssertionResult(IEnumerable<AssertionFailure> reasons)
+        public AssertionResult(IEnumerable<AssertionFailure> reasons)
             :this(true)
         {
             Failures = reasons switch
@@ -33,7 +33,8 @@ namespace FluentAuthorization
                 _ => reasons.ToArray()
             };
         }
-        internal AssertionResult(AssertionFailure failure)
+
+        public AssertionResult(AssertionFailure failure)
             : this(new[] { failure })
         {
 
