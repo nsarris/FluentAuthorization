@@ -13,6 +13,9 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -20,7 +23,9 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
-		<!--<None Include="..\..\..\logo.png" Pack="true" PackagePath="\"/>-->
+		<None Include="../../icon.png" Pack="true" PackagePath="\"/>
+		<None Include="../../docs/README.md" Pack="true" PackagePath="\"/>
+		<None Include="../../docs/LICENSE.txt" Pack="true" PackagePath="\"/>
 	</ItemGroup>
 
 	<ItemGroup>
