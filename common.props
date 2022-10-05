@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<LangVersion>10.0</LangVersion>
-		<Version>1.0.0-preview.4</Version>
+		<Version>1.0.0</Version>
 		<InformationalVersion>$(VersionPrefix) - $(Configuration)</InformationalVersion>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
