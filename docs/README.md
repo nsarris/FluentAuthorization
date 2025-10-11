@@ -1,6 +1,6 @@
 # FluentAuthorization
 
-A technology?agnostic, code?first, fluent authorization framework for defining and asserting security policies in any layer (domain model, application services, background workers, UI gateways, APIs). It is intentionally decoupled from ASP.NET Core to keep authorization logic close to the domain while remaining host?independent.
+A technology-agnostic, code-first, fluent authorization framework for defining and asserting security policies in any layer (domain model, application services, background workers, UI gateways, APIs). It is intentionally decoupled from ASP.NET Core to keep authorization logic close to the domain while remaining host independent.
 
 ---
 ## Table of Contents
@@ -14,8 +14,8 @@ A technology?agnostic, code?first, fluent authorization framework for defining a
 8. Building and Using a Policy Context
 9. Dependency Injection Integration
 10. Working With Results & Failures
-11. Tri?State (Undefined) Semantics
-12. Dynamic / Name?Based Assertions
+11. Tri-State (Undefined) Semantics
+12. Dynamic / Name-Based Assertions
 13. Testing Strategies
 14. Best Practices
 15. Extensibility Points
@@ -30,7 +30,7 @@ Traditional authorization often lives at the outer web layer, making reuse in do
 - Enables rich failure diagnostics (not just boolean).
 - Allows injecting additional domain data to drive permission checks.
 - Supports both stateless and stateful (parameterized) permissions.
-- Remains framework?agnostic (can be used in console apps, services, tests, ASP.NET Core, etc.).
+- Remains framework agnostic (can be used in console apps, services, tests, ASP.NET Core, etc.).
 
 ---
 ## 2. Core Concepts
@@ -39,7 +39,7 @@ Traditional authorization often lives at the outer web layer, making reuse in do
 | Policy | A class grouping related permissions concerning a (User, Resource, Data) triple. |
 | Permission | A single assertion that can Allow, Deny, or be Undefined. May be stateless or stateful (parameterized). |
 | Policy Context | Runtime container holding a policy instance, the current user, target resource, and its loaded `IEnumerable<TData>`. |
-| Data Provider (`IPolicyDataProvider<TUser>`) | Supplies policy?specific data rows used during permission evaluation. |
+| Data Provider (`IPolicyDataProvider<TUser>`) | Supplies policy specific data rows used during permission evaluation. |
 | User Context Provider (`IUserContextProvider<TUser>`) | Supplies the current user/principal. |
 | Assertion Result (`AssertionResult`) | Outcome of a permission evaluation (Allowed / Denied / Undefined + failures). |
 | Assertion Failure (`AssertionFailure`) | Describes a reason for denial (policy, permission, message, reason code/text). |
@@ -52,7 +52,7 @@ Add the project or (future) NuGet package to your solution.
 
 ---
 ## 4. Quick Start (Direct Usage)
-Minimal direct (non?DI) usage showing a stateless policy.
+Minimal direct (non DI) usage showing a stateless policy.
 ```csharp
 // User representation
 a public record Principal(string Id, string Name);
@@ -148,10 +148,10 @@ public sealed class ExamplePolicy : Policy<MyUser, MyResource, ExamplePolicy.Dat
 |----------|----------------|-----------|
 | `AssertWith(Func<AssertionContext, AssertionResult>)` | Full control over outcome | Return any result form directly. |
 | `AssertWith(Func<AssertionContext, bool>)` | Boolean -> Allow/Deny | Simple yes/no checks. |
-| `AssertWith(Func<AssertionContext, bool?>)` | Nullable bool -> Allow/Deny/Undefined | Enables tri?state decisions. |
+| `AssertWith(Func<AssertionContext, bool?>)` | Nullable bool -> Allow/Deny/Undefined | Enables tri-state decisions. |
 | `AssertWith<TState>(Func<AssertionContext<TState>, AssertionResult>)` | Stateful full control | Parameterized assertion. |
 | `AssertWith<TState>(Func<AssertionContext<TState>, bool>)` | Stateful boolean | Allow/Deny with extra state. |
-| `AssertWith<TState>(Func<AssertionContext<TState>, bool?>)` | Stateful tri?state | Parameterized tri?state logic. |
+| `AssertWith<TState>(Func<AssertionContext<TState>, bool?>)` | Stateful tri-state | Parameterized tri-state logic. |
 
 Add optional:
 - `.WithName(string)` (recommended; used in failure reporting).
@@ -170,7 +170,7 @@ var canViewPage7 = ctx.Assert(p => p.ViewPage, 7);
 
 ---
 ## 7. Data Providers (Supplying `TData`)
-Implement `IPolicyDataProvider<TUser>` to supply policy?specific rows. The library will call:
+Implement `IPolicyDataProvider<TUser>` to supply policy specific rows. The library will call:
 ```csharp
 Task<IEnumerable<TData>> GetDataAsync<TPolicy, TResource, TData>(
     TUser user,
@@ -261,7 +261,7 @@ if (!update.IsAllowed)
 You can map failures to error contracts, logs, audits, etc.
 
 ---
-## 11. Tri?State (Undefined) Semantics
+## 11. Tri-State (Undefined) Semantics
 Using a nullable boolean assertion (`Func<..., bool?>`) returns `Undefined` when the delegate returns `null`.
 ```csharp
 Escalate = b.AssertWith(ctx =>
@@ -279,7 +279,7 @@ if (res.IsUndefined)
 ```
 
 ---
-## 12. Dynamic / Name?Based Assertions
+## 12. Dynamic / Name-Based Assertions
 When enumerating permissions dynamically (e.g., UI permission matrix), you can assert by name.
 ```csharp
 string[] permissionNames = { nameof(CustomerRecordPolicy.View), nameof(CustomerRecordPolicy.Update) };
@@ -287,7 +287,7 @@ var evaluations = permissionNames
     .Select(n => (Name: n, Result: ctx.Assert(n)))
     .ToDictionary(t => t.Name, t => t.Result.IsAllowed);
 ```
-Use strongly typed lambda form for compile?time safety in most business code.
+Use strongly typed lambda form for compile-time safety in most business code.
 
 ---
 ## 13. Testing Strategies
@@ -321,7 +321,7 @@ var contexts = provider.GetRequiredService<IPolicyContextProvider>();
 ---
 ## 14. Best Practices
 - Keep policy classes cohesive (one aggregate or resource type each).
-- Ensure policy instances are stateless (no mutable per?request fields) -> treat them as singletons when possible.
+- Ensure policy instances are stateless (no mutable per request fields) -> treat them as singletons when possible.
 - Always set `.WithName(...)` for clarity and stable diagnostics.
 - Derive failure messages from contextual data for operator troubleshooting.
 - Avoid excessive reflection by preferring lambda assertions in hot paths.
@@ -346,21 +346,21 @@ A: Those are HTTP pipeline oriented; this library decouples authorization for do
 **Q: How do I localize messages?**  
 A: Provide `.WithMessage(ctx => localizer["..."])` using your localization abstraction.
 
-**Q: Can I short?circuit multiple permission checks?**  
+**Q: Can I short circuit multiple permission checks?**  
 A: Evaluate sequentially; you can implement a composite helper that stops on first Deny if desired.
 
 **Q: What is `Undefined` useful for?**  
-A: It represents “indeterminate” requiring escalation, secondary policy, or deferred workflow.
+A: It represents `indeterminate` requiring escalation, secondary policy, or deferred workflow.
 
-**Q: Are policies thread?safe?**  
-A: Keep them immutable; the framework treats them as reusable without per?thread state.
+**Q: Are policies thread safe?**  
+A: Keep them immutable; the framework treats them as reusable without per thread state.
 
 ---
 ## 17. Roadmap Ideas
-(Not all implemented—community contributions welcome.)
+(community contributions welcome.)
 - Permission reflection caching & metadata.
 - Async permission delegates.
-- Built?in composite (AND/OR) evaluators.
+- Built-in composite (AND/OR) evaluators.
 - Observer / logging hooks.
 - ASP.NET Core adapter package.
 - Source generator for strongly typed permission name constants.
@@ -449,4 +449,3 @@ public class CustomerApplicationService
 ```
 
 ---
-*End of documentation.*
