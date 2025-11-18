@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FluentAuthorization
 {
@@ -53,6 +54,32 @@ namespace FluentAuthorization
             where T : IPolicy
         {
             policy.Assert(select, state).ThrowOnDeny();
+        }
+
+        /// <summary>
+        /// Throw a PolicyAssertionException if the assertion of the selected async permission fails.
+        /// </summary>
+        /// <typeparam name="T">The type of the policy.</typeparam>
+        /// <param name="context">The source context.</param>
+        /// <param name="select">The async permission selector.</param>
+        public static async Task ThrowOnDenyAsync<T>(this IPolicyContext<T> context, Func<T, IAsyncPermission> select)
+            where T : IPolicy
+        {
+            (await context.AssertAsync(select)).ThrowOnDeny();
+        }
+
+        /// <summary>
+        /// Throw a PolicyAssertionException if the assertion of the selected async permission fails.
+        /// </summary>
+        /// <typeparam name="T">The type of the policy.</typeparam>
+        /// <typeparam name="TState">The state type.</typeparam>
+        /// <param name="context">The source context.</param>
+        /// <param name="select">The async permission selector.</param>
+        /// <param name="state">The state value.</param>
+        public static async Task ThrowOnDenyAsync<T, TState>(this IPolicyContext<T> context, Func<T, IAsyncPermission<TState>> select, TState state)
+            where T : IPolicy
+        {
+            (await context.AssertAsync(select, state)).ThrowOnDeny();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FluentAuthorization
 {
@@ -51,6 +52,34 @@ namespace FluentAuthorization
             var permission = PolicyReflector.GetPermission<T, TUser, TResource, TData, TState>(Policy, permissionName);
             var typedPermission = (Policy<TUser, TResource, TData>.Permission<TState>)permission;
             return Policy.Assert(user, Resource, typedPermission, Data, state);
+        }
+
+        public async Task<AssertionResult> AssertAsync(Func<T, IAsyncPermission> select)
+        {
+            var permission = select(Policy);
+            var typedPermission = (Policy<TUser, TResource, TData>.AsyncPermission)permission;
+            return await Policy.AssertAsync(user, Resource, typedPermission, Data);
+        }
+
+        public async Task<AssertionResult> AssertAsync(string permissionName)
+        {
+            var permission = PolicyReflector.GetAsyncPermission<T, TUser, TResource, TData>(Policy, permissionName);
+            var typedPermission = (Policy<TUser, TResource, TData>.AsyncPermission)permission;
+            return await Policy.AssertAsync(user, Resource, typedPermission, Data);
+        }
+
+        public async Task<AssertionResult> AssertAsync<TState>(Func<T, IAsyncPermission<TState>> select, TState state)
+        {
+            var permission = select(Policy);
+            var typedPermission = (Policy<TUser, TResource, TData>.AsyncPermission<TState>)permission;
+            return await Policy.AssertAsync(user, Resource, typedPermission, Data, state);
+        }
+
+        public async Task<AssertionResult> AssertAsync<TState>(string permissionName, TState state)
+        {
+            var permission = PolicyReflector.GetAsyncPermission<T, TUser, TResource, TData, TState>(Policy, permissionName);
+            var typedPermission = (Policy<TUser, TResource, TData>.AsyncPermission<TState>)permission;
+            return await Policy.AssertAsync(user, Resource, typedPermission, Data, state);
         }
     }
 }
