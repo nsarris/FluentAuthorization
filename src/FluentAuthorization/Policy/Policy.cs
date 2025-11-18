@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FluentAuthorization
 {
@@ -88,6 +89,40 @@ namespace FluentAuthorization
             if (overridenResult is not null) return overridenResult;
 
             var results = data.Select(d => permission.Assert(new AssertionContext<TState>(user, resource, d, state, permission, Name))).ToList();
+
+            return AggregateAssertionsInternal(user.ToString(), permission.Name, results);
+        }
+
+        internal async Task<AssertionResult> AssertAsync(TUser user, TResource resource, IAsyncPermission permission, IEnumerable<TData> data)
+        {
+            data = AggregateDataInternal(data);
+
+            var overridenResult = OverrideAssertion(user, resource, permission.Name, data);
+            if (overridenResult is not null) return overridenResult;
+
+            var results = new List<AssertionResult>();
+            foreach (var d in data)
+            {
+                var result = await permission.AssertAsync(new AssertionContext(user, resource, d, permission, Name));
+                results.Add(result);
+            }
+
+            return AggregateAssertionsInternal(user.ToString(), permission.Name, results);
+        }
+
+        internal async Task<AssertionResult> AssertAsync<TState>(TUser user, TResource resource, IAsyncPermission<TState> permission, IEnumerable<TData> data, TState state)
+        {
+            data = AggregateDataInternal(data);
+
+            var overridenResult = OverrideAssertion(user, resource, permission.Name, data);
+            if (overridenResult is not null) return overridenResult;
+
+            var results = new List<AssertionResult>();
+            foreach (var d in data)
+            {
+                var result = await permission.AssertAsync(new AssertionContext<TState>(user, resource, d, state, permission, Name));
+                results.Add(result);
+            }
 
             return AggregateAssertionsInternal(user.ToString(), permission.Name, results);
         }

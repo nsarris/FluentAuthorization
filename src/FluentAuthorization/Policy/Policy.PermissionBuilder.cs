@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace FluentAuthorization
 {
@@ -72,6 +73,76 @@ namespace FluentAuthorization
             public StatefullPermissionBuilder<TState> AssertWith<TState>(Func<AssertionContext<TState>, bool?> assert)
             {
                 return new StatefullPermissionBuilder<TState>(ctx => assert(ctx) switch
+                {
+                    true => ctx.Allow(),
+                    false => ctx.Deny(),
+                    _ => ctx.Undefined()
+                });
+            }
+
+            /// <summary>
+            /// Defines the asynchronous permission assertion logic for a stateless permission.
+            /// </summary>
+            /// <param name="assertAsync">The async assertion function.</param>
+            /// <returns></returns>
+            public StatelessAsyncPermissionBuilder AssertWithAsync(Func<AssertionContext, Task<AssertionResult>> assertAsync)
+            {
+                return new StatelessAsyncPermissionBuilder(assertAsync);
+            }
+
+            /// <summary>
+            /// Defines the asynchronous permission assertion logic for a stateless permission.
+            /// </summary>
+            /// <param name="assertAsync">The async assertion function.</param>
+            /// <returns></returns>
+            public StatelessAsyncPermissionBuilder AssertWithAsync(Func<AssertionContext, Task<bool>> assertAsync)
+            {
+                return new StatelessAsyncPermissionBuilder(async ctx => await assertAsync(ctx) ? ctx.Allow() : ctx.Deny());
+            }
+
+            /// <summary>
+            /// Defines the asynchronous permission assertion logic for a stateless permission.
+            /// </summary>
+            /// <param name="assertAsync">The async assertion function.</param>
+            /// <returns></returns>
+            public StatelessAsyncPermissionBuilder AssertWithAsync(Func<AssertionContext, Task<bool?>> assertAsync)
+            {
+                return new StatelessAsyncPermissionBuilder(async ctx => (await assertAsync(ctx)) switch
+                {
+                    true => ctx.Allow(),
+                    false => ctx.Deny(),
+                    _ => ctx.Undefined()
+                });
+            }
+
+            /// <summary>
+            /// Defines the asynchronous permission assertion logic for a statefull permission.
+            /// </summary>
+            /// <param name="assertAsync">The async assertion function.</param>
+            /// <returns></returns>
+            public StatefullAsyncPermissionBuilder<TState> AssertWithAsync<TState>(Func<AssertionContext<TState>, Task<AssertionResult>> assertAsync)
+            {
+                return new StatefullAsyncPermissionBuilder<TState>(assertAsync);
+            }
+
+            /// <summary>
+            /// Defines the asynchronous permission assertion logic for a statefull permission.
+            /// </summary>
+            /// <param name="assertAsync">The async assertion function.</param>
+            /// <returns></returns>
+            public StatefullAsyncPermissionBuilder<TState> AssertWithAsync<TState>(Func<AssertionContext<TState>, Task<bool>> assertAsync)
+            {
+                return new StatefullAsyncPermissionBuilder<TState>(async ctx => await assertAsync(ctx) ? ctx.Allow() : ctx.Deny());
+            }
+
+            /// <summary>
+            /// Defines the asynchronous permission assertion logic for a statefull permission.
+            /// </summary>
+            /// <param name="assertAsync">The async assertion function.</param>
+            /// <returns></returns>
+            public StatefullAsyncPermissionBuilder<TState> AssertWithAsync<TState>(Func<AssertionContext<TState>, Task<bool?>> assertAsync)
+            {
+                return new StatefullAsyncPermissionBuilder<TState>(async ctx => (await assertAsync(ctx)) switch
                 {
                     true => ctx.Allow(),
                     false => ctx.Deny(),

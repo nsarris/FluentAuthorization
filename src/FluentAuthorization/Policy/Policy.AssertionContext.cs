@@ -11,6 +11,7 @@ namespace FluentAuthorization
         public class AssertionContext : AssertionContextBase
         {
             private readonly IPermission permission;
+            private readonly IAsyncPermission asyncPermission;
 
             internal AssertionContext(TUser user, TResource resource, TData data, IPermission permission, string policyName) 
                 : base(user, resource, data, permission.Name, policyName)
@@ -18,8 +19,23 @@ namespace FluentAuthorization
                 this.permission = permission;
             }
 
+            internal AssertionContext(TUser user, TResource resource, TData data, IAsyncPermission asyncPermission, string policyName) 
+                : base(user, resource, data, asyncPermission.Name, policyName)
+            {
+                this.asyncPermission = asyncPermission;
+            }
+
             private AssertionFailure BuildFailure(string reason)
-                => new (User.ToString(), PermissionName, PolicyName, permission.BuildMessage(this), reason);
+                => new (User.ToString(), PermissionName, PolicyName, BuildMessageInternal(), reason);
+
+            private string BuildMessageInternal()
+            {
+                if (permission != null)
+                    return permission.BuildMessage(this);
+                if (asyncPermission != null)
+                    return asyncPermission.BuildMessage(this);
+                return string.Empty;
+            }
 
             /// <summary>
             /// Produces a Deny result with the specified reason.
